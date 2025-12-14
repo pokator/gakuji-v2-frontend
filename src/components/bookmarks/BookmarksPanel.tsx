@@ -233,6 +233,7 @@ export const BookmarksPanel = ({
                     </h3>
                     <div className="space-y-2">
                       {bookmarks.kanji
+                        .filter(bookmarkMatchesFilter)
                         .sort((a, b) => b.timestamp - a.timestamp)
                         .map((bookmark) => (
                           <BookmarkedKanjiCard
