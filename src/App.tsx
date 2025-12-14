@@ -17,7 +17,7 @@ import { useBookmarks } from "./hooks/useBookmarks";
 import { useAuth } from "./hooks/useAuth";
 import AuthModal from "./components/auth/AuthModal";
 import SavedSongsPanel from './components/lyrics/SavedSongsPanel';
-import { saveSong } from './utils/savedSongs';
+import { saveSong, listSongs } from './utils/savedSongs';
 
 const App = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -151,6 +151,30 @@ const App = () => {
   if (authLoading || loading) return <LoadingSpinner />;
   if (!user) return <AuthModal isOpen={true} />;
   const totalBookmarks = bookmarks.words.length + bookmarks.kanji.length;
+  // determine active song metadata from saved songs if the current cached lyrics match a saved song
+  let activeTitle: string | null = null;
+  let activeArtist: string | null = null;
+  try {
+    const LS_KEY_BASE = 'gakuji:lastLyrics';
+    const lsKey = user?.id ? `${LS_KEY_BASE}:${user.id}` : `${LS_KEY_BASE}:anon`;
+    const cachedLyrics = (() => {
+      try { return localStorage.getItem(lsKey); } catch { return null; }
+    })();
+    if (cachedLyrics) {
+      try {
+        const songs = listSongs();
+        const match = songs.find(s => s.lyrics === cachedLyrics);
+        if (match) {
+          activeTitle = match.title ?? null;
+          activeArtist = match.artist ?? null;
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+  } catch (err) {
+    // ignore
+  }
   
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col md:flex-row overflow-hidden">
@@ -163,6 +187,8 @@ const App = () => {
           onOpenLyricsModal={() => setLyricsModalOpen(true)}
           onOpenSavedSongs={handleSavedSongsClick}
           isProcessing={processing}
+          activeTitle={activeTitle}
+          activeArtist={activeArtist}
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12 flex items-start justify-center">
           <div className="w-full max-w-3xl">

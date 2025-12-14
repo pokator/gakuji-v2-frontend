@@ -1,4 +1,4 @@
-import { BookOpen, Bookmark, LogOut, Clipboard, List } from 'lucide-react';
+import { BookOpen, Bookmark, LogOut, Clipboard, List } from "lucide-react";
 
 interface HeaderProps {
   bookmarkCount: number;
@@ -8,62 +8,100 @@ interface HeaderProps {
   onOpenLyricsModal?: () => void;
   onOpenSavedSongs?: () => void;
   isProcessing?: boolean;
+  activeTitle?: string | null;
+  activeArtist?: string | null;
 }
 
-export const Header = ({ bookmarkCount, onBookmarksClick, user, onLogout, onOpenLyricsModal, onOpenSavedSongs, isProcessing }: HeaderProps) => (
-  <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm z-10">
-    <div className="flex items-center gap-2">
-      <BookOpen className="text-indigo-600 w-6 h-6" />
-      <h1 className="text-xl font-bold tracking-tight text-slate-800">Gakuji</h1>
+export const Header = ({
+  bookmarkCount,
+  onBookmarksClick,
+  user,
+  onLogout,
+  onOpenLyricsModal,
+  onOpenSavedSongs,
+  isProcessing,
+  activeTitle,
+  activeArtist,
+}: HeaderProps) => (
+  <header className="z-10 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 shadow-sm">
+    <div className="flex w-[400px] items-center justify-start gap-2">
+      <BookOpen className="h-6 w-6 text-indigo-600" />
+      <h1 className="text-xl font-bold tracking-tight text-slate-800">
+        Gakuji
+      </h1>
     </div>
-    
-    <div className="flex items-center gap-4">
-      <div className="text-xs text-gray-400 font-medium hidden sm:block">
+
+    <div className="flex-1 min-w-0 px-4">
+      <div className="text-center">
+        {(activeTitle || activeArtist) && (
+          <span className="inline-block max-w-full truncate text-2xl font-extrabold tracking-tight text-slate-800">
+            {activeTitle || "— No Title —"}
+            {activeArtist && (
+              <>
+                <span className="mx-2 font-light text-slate-500">—</span>
+                <span className="font-semibold text-slate-600">
+                  {activeArtist}
+                </span>
+              </>
+            )}
+          </span>
+        )}
+      </div>
+    </div>
+
+    <div className="flex w-[400px] items-center justify-end gap-4">
+      <div className="hidden text-xs font-medium text-gray-400 sm:block">
         Click words to analyze
       </div>
+
       {onOpenLyricsModal && (
         <button
           onClick={onOpenLyricsModal}
           aria-label="Open lyrics modal"
           title="Paste lyrics"
           disabled={isProcessing}
-          className={`p-2 hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-center ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`flex items-center justify-center rounded-lg p-2 transition-colors hover:bg-gray-50 ${
+            isProcessing ? "cursor-not-allowed opacity-50" : ""
+          }`}
         >
-          <Clipboard className="w-5 h-5 text-gray-400" />
+          <Clipboard className="h-5 w-5 text-gray-400" />
         </button>
       )}
+
       {onOpenSavedSongs && (
         <button
           onClick={onOpenSavedSongs}
           aria-label="Saved songs"
           title="Saved songs"
-          className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
+          className="rounded-lg p-2 transition-colors hover:bg-gray-50"
         >
-          <List className="w-5 h-5 text-gray-400" />
+          <List className="h-5 w-5 text-gray-400" />
         </button>
       )}
+
       <button
         onClick={onBookmarksClick}
-        className="relative p-2 hover:bg-yellow-50 rounded-lg transition-colors group"
         title="View bookmarks"
+        className="group relative rounded-lg p-2 transition-colors hover:bg-yellow-50"
       >
-        <Bookmark 
-          className="w-5 h-5 text-gray-400 group-hover:text-yellow-600 transition-colors" 
-          fill={bookmarkCount > 0 ? 'currentColor' : 'none'}
+        <Bookmark
+          className="h-5 w-5 text-gray-400 transition-colors group-hover:text-yellow-600"
+          fill={bookmarkCount > 0 ? "currentColor" : "none"}
         />
         {bookmarkCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-            {bookmarkCount > 99 ? '99+' : bookmarkCount}
+          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-yellow-500 text-xs font-bold text-white">
+            {bookmarkCount > 99 ? "99+" : bookmarkCount}
           </span>
         )}
       </button>
+
       {user && (
         <button
           onClick={onLogout}
-          className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
           title="Logout"
+          className="rounded-lg p-2 transition-colors hover:bg-gray-50"
         >
-          <LogOut className="w-5 h-5 text-gray-400" />
+          <LogOut className="h-5 w-5 text-gray-400" />
         </button>
       )}
     </div>
