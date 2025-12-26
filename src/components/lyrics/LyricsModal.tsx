@@ -8,9 +8,14 @@ interface LyricsModalProps {
   onClear: () => void;
   processing: boolean;
   error?: string | null;
+  initialLyrics?: string | null;
+  initialTitle?: string | null;
+  initialArtist?: string | null;
+  modalTitle?: string;
+  submitLabel?: string;
 }
 
-export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, error }: LyricsModalProps) => {
+export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, error, initialLyrics, initialTitle, initialArtist, modalTitle, submitLabel }: LyricsModalProps) => {
   const [value, setValue] = useState('');
   const [title, setTitle] = useState<string>('');
   const [artist, setArtist] = useState<string>('');
@@ -20,9 +25,9 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
   useEffect(() => {
     if (isOpen) {
       setLocalError(null);
-      setValue('');
-      setTitle('');
-      setArtist('');
+      setValue(initialLyrics ?? '');
+      setTitle(initialTitle ?? '');
+      setArtist(initialArtist ?? '');
       setTimeout(() => textareaRef.current?.focus(), 100);
     }
   }, [isOpen]);
@@ -54,7 +59,7 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="bg-white rounded-lg w-[min(90%,700px)] p-4 shadow-lg">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="font-bold">Paste lyrics</h3>
+          <h3 className="font-bold">{modalTitle ?? 'Paste lyrics'}</h3>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-800">Close</button>
         </div>
 
@@ -109,7 +114,7 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
               {processing ? (
                 <span className="w-3 h-3 rounded-full bg-white animate-pulse" />
               ) : null}
-              Send
+              {submitLabel ?? 'Send'}
             </button>
           </div>
         </div>

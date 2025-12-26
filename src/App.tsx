@@ -17,11 +17,11 @@ import { useBookmarks } from "./hooks/useBookmarks";
 import { useAuth } from "./hooks/useAuth";
 import AuthModal from "./components/auth/AuthModal";
 import SavedSongsPanel from './components/lyrics/SavedSongsPanel';
-import { saveSong, listSongs } from './utils/savedSongs';
+import { saveSong, listSongs, updateSong } from './utils/savedSongs';
 
 const App = () => {
   const { user, loading: authLoading, signOut } = useAuth();
-  const { appData, loading, processing, error, processLyrics, clearLyrics } = useAppData(!!user, user?.id ?? null); 
+  const { appData, loading, processing, error, processLyrics, clearLyrics, rawLyrics, syncLyrics } = useAppData(!!user, user?.id ?? null); 
   const {
     bookmarks,
     isLoading: bookmarksLoading,
@@ -38,6 +38,7 @@ const App = () => {
   } = useBookmarks();
   const [lyricsModalOpen, setLyricsModalOpen] = useState(false);
   const [savedSongsOpen, setSavedSongsOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [listPickerOpen, setListPickerOpen] = useState(false);
   const [pickerBookmarkType, setPickerBookmarkType] = useState<'word' | 'kanji' | null>(null);
   const [pickerKey, setPickerKey] = useState<string | null>(null);
@@ -216,6 +217,7 @@ const App = () => {
                   selectedWord={selectedWord}
                   wordMap={appData?.word_map || {}}
                   onWordClick={handleWordClick}
+                  onEdit={() => setEditModalOpen(true)}
                 />
                 {processing && (
                   <div className="absolute inset-0 bg-white/60 flex flex-col items-center justify-center rounded-xl">
@@ -290,6 +292,55 @@ const App = () => {
           setSelectedLine(null);
           setSelectedTranslation(null);
           // refresh bookmark details so full entries are fetched from backend/cache
+          try {
+            refreshBookmarks();
+          } catch (err) {
+            console.error('Failed to refresh bookmarks after clearing lyrics', err);
+          }
+        }}
+        processing={processing}
+        error={error}
+      />
+
+      {/* Edit modal: prefill with current raw lyrics and metadata */}
+      <LyricsModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        initialLyrics={rawLyrics ?? null}
+        initialTitle={activeTitle}
+        initialArtist={activeArtist}
+        modalTitle="Edit lyrics"
+        submitLabel="Save"
+        onSubmit={async (payload: { lyrics: string; title?: string | null; artist?: string | null }) => {
+          setEditModalOpen(false);
+          if (rawLyrics == null) {
+            pushToast('No original lyrics to edit', 'error');
+            return;
+          }
+          try {
+            const data = await syncLyrics(rawLyrics, payload.lyrics);
+            pushToast('Lyrics synced', 'success');
+            // If there was a saved song matching the original lyrics, update it
+            try {
+              const songs = listSongs();
+              const match = songs.find(s => s.lyrics === rawLyrics);
+              if (match) {
+                updateSong(match.id, { title: payload.title ?? match.title, artist: payload.artist ?? match.artist, lyrics: payload.lyrics, appData: data, lastProcessedAt: Date.now() });
+              }
+            } catch (err) {
+              console.error('Failed to update saved song after edit', err);
+            }
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : String(err);
+            pushToast(msg || 'Failed to sync lyrics', 'error');
+          }
+        }}
+        onClear={() => {
+          // reuse existing clear behavior
+          clearLyrics();
+          setSelectedWord(null);
+          setSelectedLine(null);
+          setSelectedTranslation(null);
           try {
             refreshBookmarks();
           } catch (err) {

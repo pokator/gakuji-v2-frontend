@@ -5,6 +5,7 @@ const BACKEND_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
 
 export const useAppData = (enabled: boolean, userId?: string | null) => {
   const [appData, setAppData] = useState<AppData | null>(null);
+  const [rawLyrics, setRawLyrics] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,6 +28,39 @@ export const useAppData = (enabled: boolean, userId?: string | null) => {
     const data: AppData = await res.json();
     return data;
   }, []);
+
+  const syncLyrics = useCallback(async (original: string, modified: string) => {
+    setProcessing(true);
+    setError(null);
+    try {
+      const res = await fetch(`${BACKEND_BASE}/sync-lyrics`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ original, modified }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to sync lyrics: ${res.status}`);
+      }
+
+      const data: AppData = await res.json();
+      setAppData(data);
+      setRawLyrics(modified);
+      try {
+        localStorage.setItem(getLsKey(), modified);
+      } catch {
+        // ignore localStorage write errors
+      }
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+      throw err;
+    } finally {
+      setProcessing(false);
+    }
+  }, [getLsKey]);
 
   useEffect(() => {
     if (!enabled) {
@@ -58,6 +92,7 @@ export const useAppData = (enabled: boolean, userId?: string | null) => {
         try {
           const data = await fetchProcess(lyrics);
           setAppData(data);
+          setRawLyrics(lyrics);
         } finally {
           setProcessing(false);
         }
@@ -76,6 +111,7 @@ export const useAppData = (enabled: boolean, userId?: string | null) => {
     try {
       const data = await fetchProcess(lyrics);
       setAppData(data);
+      setRawLyrics(lyrics);
       try {
         localStorage.setItem(getLsKey(), lyrics);
       } catch {
@@ -93,6 +129,7 @@ export const useAppData = (enabled: boolean, userId?: string | null) => {
     setAppData(null);
     setError(null);
     setLoading(false);
+    setRawLyrics(null);
     try {
       localStorage.removeItem(getLsKey());
     } catch {
@@ -100,5 +137,5 @@ export const useAppData = (enabled: boolean, userId?: string | null) => {
     }
   }, [getLsKey]);
 
-  return { appData, loading, processing, error, processLyrics, clearLyrics };
+  return { appData, loading, processing, error, processLyrics, clearLyrics, rawLyrics, syncLyrics };
 };
