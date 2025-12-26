@@ -1,4 +1,5 @@
 import { WordToken } from './WordToken';
+import { Edit2 } from 'lucide-react';
 import type { AppData } from '../../types';
 
 interface LyricsDisplayProps {
@@ -10,16 +11,16 @@ interface LyricsDisplayProps {
 }
 
 export const LyricsDisplay = ({ lyricsLines, selectedWord, wordMap, onWordClick, onEdit }: LyricsDisplayProps) => {
-  console.log(lyricsLines);
   return (
     <div className="relative bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:p-12 w-full max-w-3xl">
       {onEdit ? (
         <div className="absolute right-4 top-4">
           <button
             onClick={onEdit}
-            className="text-sm px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded border border-slate-100"
+            aria-label="Edit lyrics"
+            className="p-2 bg-gray-100 hover:bg-gray-200 rounded border border-slate-100 flex items-center justify-center"
           >
-            Edit
+            <Edit2 className="w-4 h-4 text-slate-700" />
           </button>
         </div>
       ) : null}

@@ -20,6 +20,7 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
   const [title, setTitle] = useState<string>('');
   const [artist, setArtist] = useState<string>('');
   const [localError, setLocalError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
@@ -34,19 +35,22 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
 
   if (!isOpen) return null;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const trimmed = value.trim();
     if (!trimmed) {
       setLocalError('Please paste some lyrics before sending.');
       return;
     }
-    // Close the modal immediately and let the caller handle processing/toasts
+    setLocalError(null);
+    setSubmitting(true);
     try {
-      onSubmit({ lyrics: trimmed, title: title.trim() || null, artist: artist.trim() || null });
+      // await caller's handler so modal can show errors / spinner until complete
+      await Promise.resolve(onSubmit({ lyrics: trimmed, title: title.trim() || null, artist: artist.trim() || null }));
       onClose();
     } catch (err) {
-      // onSubmit may return a promise; errors will be surfaced by the caller/hook
-      setLocalError((err as Error)?.message || 'Failed to process lyrics');
+      setLocalError(err instanceof Error ? err.message : String(err) || 'Failed to process lyrics');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -102,16 +106,16 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
             <button
               onClick={handleClear}
               className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200"
-              disabled={processing}
+              disabled={processing || submitting}
             >
               Clear lyrics
             </button>
             <button
               onClick={handleSubmit}
-              className={`px-4 py-1 rounded bg-indigo-600 text-white flex items-center gap-2 ${processing ? 'opacity-60 cursor-not-allowed' : 'hover:bg-indigo-700'}`}
-              disabled={processing}
+              className={`px-4 py-1 rounded bg-indigo-600 text-white flex items-center gap-2 ${(processing || submitting) ? 'opacity-60 cursor-not-allowed' : 'hover:bg-indigo-700'}`}
+              disabled={processing || submitting}
             >
-              {processing ? (
+              {(processing || submitting) ? (
                 <span className="w-3 h-3 rounded-full bg-white animate-pulse" />
               ) : null}
               {submitLabel ?? 'Send'}

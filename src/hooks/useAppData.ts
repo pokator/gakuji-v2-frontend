@@ -38,11 +38,21 @@ export const useAppData = (enabled: boolean, userId?: string | null) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ original, modified }),
+        body: JSON.stringify({ original_lyrics: original, modified_lyrics: modified }),
       });
 
       if (!res.ok) {
-        throw new Error(`Failed to sync lyrics: ${res.status}`);
+        const bodyText = await res.text();
+        let message = bodyText;
+        try {
+          const parsed = JSON.parse(bodyText);
+          if (parsed && (parsed.message || parsed.error)) {
+            message = parsed.message || parsed.error;
+          }
+        } catch {
+          // not JSON — keep raw text
+        }
+        throw new Error(`Failed to sync lyrics: ${res.status} - ${message}`);
       }
 
       const data: AppData = await res.json();
