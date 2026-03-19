@@ -35,20 +35,20 @@ export const Sidebar = ({
 }: SidebarProps) => (
   <div 
     className={`
-      fixed inset-y-0 right-0 z-20 w-full md:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-gray-100
+      fixed inset-y-0 right-0 z-20 w-full md:w-96 bg-surface shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-border
       ${isOpen ? 'translate-x-0' : 'translate-x-full'}
     `}
   >
     {selectedWord ? (
       <div className="h-full flex flex-col">
-        <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+        <div className="p-5 border-b border-border flex justify-between items-center bg-surface">
           <div>
-            <h2 className="text-3xl font-bold text-indigo-900 mb-1">{selectedWord}</h2>
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-widest">Selected Token</p>
+            <h2 className="text-3xl font-bold text-primary mb-1">{selectedWord}</h2>
+            <p className="text-xs font-medium text-muted uppercase tracking-widest">Selected Token</p>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600"
+            className="p-2 hover:bg-surface rounded-full transition-colors text-muted hover:text-text"
           >
             <X size={20} />
           </button>
@@ -56,10 +56,10 @@ export const Sidebar = ({
 
         <div className="flex-1 overflow-y-auto p-5 space-y-6">
           {selectedLine && (
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-lg font-medium text-slate-700 mb-2">{selectedLine.join('')}</p>
+            <div className="bg-surface rounded-lg p-4">
+              <p className="text-lg font-medium text-text mb-2">{selectedLine.join('')}</p>
               {selectedTranslation && (
-                <p className="text-sm text-slate-500 italic">{selectedTranslation}</p>
+                <p className="text-sm text-muted italic">{selectedTranslation}</p>
               )}
             </div>
           )}
@@ -81,7 +81,7 @@ export const Sidebar = ({
               onOpenListPicker={onOpenListPicker}
             />
           )}
-          <hr className="border-gray-100" />
+          <hr className="border-border" />
           <KanjiSection 
             selectedWord={selectedWord} 
             appData={appData}
@@ -92,7 +92,7 @@ export const Sidebar = ({
         </div>
       </div>
     ) : (
-      <div className="h-full flex items-center justify-center text-gray-400">
+      <div className="h-full flex items-center justify-center text-muted">
         <span className="text-sm">Select a word</span>
       </div>
     )}

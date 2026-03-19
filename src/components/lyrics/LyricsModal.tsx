@@ -61,10 +61,10 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-lg w-[min(90%,700px)] p-4 shadow-lg">
-        <div className="flex justify-between items-center mb-3">
+      <div className="bg-surface rounded-lg w-[min(90%,700px)] p-4 shadow-lg">
+        <div className="flex justify-between items-center mb-3 text-button-text">
           <h3 className="font-bold">{modalTitle ?? 'Paste lyrics'}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-800">Close</button>
+          <button onClick={onClose} className="text-muted hover:text-text">Close</button>
         </div>
 
         <div className="space-y-2">
@@ -87,7 +87,7 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
 
           <textarea
             ref={textareaRef}
-            className="w-full h-56 border rounded p-2 text-sm font-medium text-slate-700"
+            className="w-full h-56 border rounded p-2 text-sm font-medium text-text"
             placeholder="Paste raw lyrics here (preserve new lines / sections)..."
             value={value}
             onChange={(e) => setValue(e.target.value)}
@@ -102,17 +102,17 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
             </div>
           )}
 
-          <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2">
             <button
               onClick={handleClear}
-              className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200"
+              className="px-3 py-1 rounded bg-surface hover:opacity-90"
               disabled={processing || submitting}
             >
               Clear lyrics
             </button>
             <button
               onClick={handleSubmit}
-              className={`px-4 py-1 rounded bg-indigo-600 text-white flex items-center gap-2 ${(processing || submitting) ? 'opacity-60 cursor-not-allowed' : 'hover:bg-indigo-700'}`}
+              className={`px-4 py-1 rounded bg-button text-button-text flex items-center gap-2 ${(processing || submitting) ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90'}`}
               disabled={processing || submitting}
             >
               {(processing || submitting) ? (

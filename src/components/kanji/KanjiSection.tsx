@@ -27,7 +27,7 @@ export const KanjiSection = ({
   
   return (
     <section>
-      <div className="flex items-center gap-2 mb-3 text-amber-600">
+      <div className="flex items-center gap-2 mb-3 text-warning">
         <Type size={16} />
         <h3 className="text-sm font-bold uppercase tracking-wider">Kanji Breakdown</h3>
       </div>
@@ -44,7 +44,7 @@ export const KanjiSection = ({
           />
         ))
       ) : (
-        <div className="p-4 bg-amber-50/50 rounded-lg text-sm text-amber-800/60 italic text-center">
+        <div className="p-4 rounded-lg text-sm italic text-muted text-center" style={{ backgroundColor: 'rgba(var(--color-warning-rgb),0.07)' }}>
           No Kanji characters detected in this word.
         </div>
       )}

@@ -103,36 +103,36 @@ export const BookmarksPanel = ({
       {/* Panel */}
       <div 
         className={`
-          fixed inset-y-0 right-0 z-40 w-full md:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-gray-100
+          fixed inset-y-0 right-0 z-40 w-full md:w-96 bg-panel text-panel-text shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-border
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
         `}
       >
         <div className="h-full flex flex-col">
           {/* Header */}
-          <div className="p-5 border-b border-gray-100 bg-gradient-to-r from-yellow-50 to-amber-50">
+          <div className="p-5 border-b border-border bg-surface">
             <div className="flex justify-between items-start mb-2">
               <div className="flex items-center gap-2">
-                <Bookmark className="text-yellow-600 w-6 h-6" fill="currentColor" />
-                <h2 className="text-xl font-bold text-gray-900">Bookmarks</h2>
+                <Bookmark className="text-warning w-6 h-6" fill="currentColor" />
+                <h2 className="text-xl font-bold text-text">Bookmarks</h2>
               </div>
               <button 
                 onClick={onClose}
-                className="p-2 hover:bg-white/50 rounded-full transition-colors text-gray-400 hover:text-gray-600"
+                className="p-2 hover:bg-surface rounded-full transition-colors text-muted hover:text-text"
               >
                 <X size={20} />
               </button>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted">
                 {totalBookmarks} {totalBookmarks === 1 ? 'item' : 'items'} saved
               </p>
                {isLoading && (
-                 <div className="text-xs text-gray-500 italic">Refreshing…</div>
+                 <div className="text-xs text-muted italic">Refreshing…</div>
                )}
               {totalBookmarks > 0 && (
                 <button
                   onClick={onClearAll}
-                  className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1 hover:bg-red-50 px-2 py-1 rounded transition-colors"
+                  className="text-xs text-danger hover:text-danger flex items-center gap-1 hover:bg-danger/10 px-2 py-1 rounded transition-colors"
                 >
                   <Trash2 size={12} />
                   Clear All
@@ -144,17 +144,17 @@ export const BookmarksPanel = ({
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-5">
             {totalBookmarks === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-8">
-                <Bookmark className="w-16 h-16 text-gray-300 mb-4" />
-                <p className="text-gray-500 text-sm mb-2">No bookmarks yet</p>
-                <p className="text-gray-400 text-xs">
+                <div className="h-full flex flex-col items-center justify-center text-center p-8">
+                <Bookmark className="w-16 h-16 text-muted mb-4" />
+                <p className="text-muted text-sm mb-2">No bookmarks yet</p>
+                <p className="text-muted text-xs">
                   Click the bookmark icon on words or kanji to save them here
                 </p>
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <label className="text-sm text-gray-600">Filter:</label>
+                  <div className="flex items-center gap-3 mb-2">
+                  <label className="text-sm text-muted">Filter:</label>
                   <select className="text-sm border px-2 py-1 rounded" value={selectedFilter} onChange={(e) => setSelectedFilter(e.target.value)}>
                     <option value="all">All lists</option>
                     <option value="nolists">No list</option>
@@ -166,9 +166,9 @@ export const BookmarksPanel = ({
                 {/* Words Section */}
                 {bookmarks.words.length > 0 && (
                   <section>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-600 mb-3 flex items-center gap-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-primary mb-3 flex items-center gap-2">
                       <span>Words</span>
-                      <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-surface text-primary px-2 py-0.5 rounded-full">
                         {bookmarks.words.length}
                       </span>
                     </h3>
@@ -225,9 +225,9 @@ export const BookmarksPanel = ({
                 {/* Kanji Section */}
                 {bookmarks.kanji.length > 0 && (
                   <section>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-amber-600 mb-3 flex items-center gap-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-warning mb-3 flex items-center gap-2">
                       <span>Kanji</span>
-                      <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-surface text-warning px-2 py-0.5 rounded-full">
                         {bookmarks.kanji.length}
                       </span>
                     </h3>

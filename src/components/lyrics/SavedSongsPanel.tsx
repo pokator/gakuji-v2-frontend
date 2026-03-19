@@ -50,30 +50,30 @@ const SavedSongsPanel = ({ isOpen, onClose, onOpen }: Props) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-lg w-[min(90%,700px)] p-4 shadow-lg">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface">
+      <div className="bg-surface rounded-lg w-[min(90%,700px)] p-4 shadow-lg">
         <div className="flex justify-between items-center mb-3">
           <h3 className="font-bold">Saved songs</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-800">Close</button>
+          <button onClick={onClose} className="text-muted hover:text-text">Close</button>
         </div>
 
         {error && <div className="mb-2"><ErrorDisplay message={error} /></div>}
 
         <div className="max-h-64 overflow-y-auto">
           {songs.length === 0 ? (
-            <div className="text-sm text-slate-600">No saved songs</div>
+            <div className="text-sm text-muted">No saved songs</div>
           ) : (
             <ul className="space-y-2">
               {songs.map(s => (
                 <li key={s.id} className="flex items-center justify-between border rounded p-2">
                   <div>
-                    <div className="font-semibold">{s.title || <span className="text-sm text-gray-400">(Untitled)</span>}</div>
-                    <div className="text-sm text-slate-600">{s.artist || ''}</div>
-                    <div className="text-xs text-gray-400">{new Date(s.createdAt).toLocaleString()}</div>
+                    <div className="font-semibold">{s.title || <span className="text-sm text-muted">(Untitled)</span>}</div>
+                    <div className="text-sm text-muted">{s.artist || ''}</div>
+                    <div className="text-xs text-muted">{new Date(s.createdAt).toLocaleString()}</div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => handleOpen(s)} className="px-3 py-1 bg-indigo-600 text-white rounded text-sm">Open</button>
-                    <button onClick={() => handleDelete(s.id)} className="px-3 py-1 bg-red-50 text-red-600 rounded text-sm">Delete</button>
+                    <button onClick={() => handleOpen(s)} className="px-3 py-1 bg-button text-button-text rounded text-sm">Open</button>
+                    <button onClick={() => handleDelete(s.id)} className="px-3 py-1 bg-danger/10 text-danger rounded text-sm">Delete</button>
                   </div>
                 </li>
               ))}

@@ -22,7 +22,7 @@ export const DefinitionsSection = ({
   
   return (
     <section>
-      <div className="flex items-center gap-2 mb-3 text-indigo-600">
+      <div className="flex items-center gap-2 mb-3 text-primary">
         <Book size={16} />
         <h3 className="text-sm font-bold uppercase tracking-wider">Definitions</h3>
       </div>
@@ -39,7 +39,7 @@ export const DefinitionsSection = ({
           />
         ))
       ) : (
-        <div className="p-4 bg-gray-50 rounded-lg text-sm text-gray-500 italic text-center">
+        <div className="p-4 bg-surface rounded-lg text-sm text-muted italic text-center">
           No dictionary definitions found for this specific token.
         </div>
       )}

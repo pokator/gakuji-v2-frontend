@@ -65,16 +65,16 @@ export const ListPicker = ({ isOpen, onClose, bookmarkType, bookmarkKey, addBook
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-lg w-96 p-4 shadow-lg">
+      <div className="bg-surface rounded-lg w-96 p-4 shadow-lg">
         <div className="flex justify-between items-center mb-3">
           <h3 className="font-bold">Manage Lists</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-800">Close</button>
+          <button onClick={onClose} className="text-muted hover:text-text">Close</button>
         </div>
         <div className="max-h-64 overflow-y-auto">
           {loading ? (
-            <div className="text-sm text-gray-500">Loading...</div>
+            <div className="text-sm text-muted">Loading...</div>
           ) : lists.length === 0 ? (
-            <div className="text-sm text-gray-500">No lists yet. Create one below.</div>
+            <div className="text-sm text-muted">No lists yet. Create one below.</div>
           ) : (
             <ul className="space-y-2">
               {lists.map(l => (
@@ -93,10 +93,10 @@ export const ListPicker = ({ isOpen, onClose, bookmarkType, bookmarkKey, addBook
           )}
         </div>
 
-        <div className="mt-4">
+            <div className="mt-4">
           <div className="flex gap-2">
             <input type="text" className="flex-1 border px-2 py-1 rounded" placeholder="New list name" value={newName} onChange={(e) => setNewName(e.target.value)} />
-            <button className="bg-indigo-600 text-white px-3 py-1 rounded" onClick={handleCreate}>Create</button>
+              <button className="bg-button text-button-text px-3 py-1 rounded" onClick={handleCreate}>Create</button>
           </div>
         </div>
       </div>

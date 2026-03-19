@@ -7,7 +7,7 @@ import ListPicker from "./components/bookmarks/ListPicker";
 import { LyricsDisplay } from "./components/lyrics/LyricsDisplay";
 import { getWordData } from './utils/dataHelpers';
 import type { WordEntry } from './types';
-import LyricsModal from './components/lyrics/LyricsModal';
+import SongsManagerModal from './components/lyrics/SongsManagerModal';
 import { LoadingSpinner } from "./components/ui/LoadingSpinner";
 import Toasts from './components/ui/Toast';
 import { Loader } from 'lucide-react';
@@ -15,9 +15,9 @@ import { ErrorDisplay } from "./components/ui/ErrorDisplay";
 import { useAppData } from "./hooks/useAppData";
 import { useBookmarks } from "./hooks/useBookmarks";
 import { useAuth } from "./hooks/useAuth";
+import { useTheme } from "./hooks/useTheme";
 import AuthModal from "./components/auth/AuthModal";
-import SavedSongsPanel from './components/lyrics/SavedSongsPanel';
-import { saveSong, listSongs, updateSong } from './utils/savedSongs';
+// saved songs handled inside SongsManagerModal
 
 const App = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -36,9 +36,10 @@ const App = () => {
     getListsForBookmark,
     refresh: refreshBookmarks,
   } = useBookmarks();
-  const [lyricsModalOpen, setLyricsModalOpen] = useState(false);
-  const [savedSongsOpen, setSavedSongsOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [songsManagerOpen, setSongsManagerOpen] = useState(false);
+  const [songsManagerOriginal, setSongsManagerOriginal] = useState<string | null>(null);
+  const [songsManagerInitialTitle, setSongsManagerInitialTitle] = useState<string | null>(null);
+  const [songsManagerInitialArtist, setSongsManagerInitialArtist] = useState<string | null>(null);
   const [listPickerOpen, setListPickerOpen] = useState(false);
   const [pickerBookmarkType, setPickerBookmarkType] = useState<'word' | 'kanji' | null>(null);
   const [pickerKey, setPickerKey] = useState<string | null>(null);
@@ -64,12 +65,40 @@ const App = () => {
     setPickerBookmarkType(null);
     setPickerKey(null);
   };
+
+  // Handler passed to SongsManagerModal. If `songsManagerOriginal` is set we call `syncLyrics`,
+  // otherwise we call `processLyrics`. Returns the processed appData when available.
+  const handleSongsManagerProcess = async (lyrics: string) => {
+    if (songsManagerOriginal) {
+      try {
+        const data = await syncLyrics(songsManagerOriginal, lyrics);
+        pushToast('Lyrics synced', 'success');
+        return data;
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        pushToast(msg || 'Failed to sync lyrics', 'error');
+        throw err;
+      }
+    } else {
+      try {
+        await processLyrics(lyrics);
+        pushToast('Lyrics processed', 'success');
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        pushToast(msg || 'Failed to process lyrics', 'error');
+        throw err;
+      }
+    }
+  };
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [selectedLine, setSelectedLine] = useState<string[] | null>(null);
   const [selectedTranslation, setSelectedTranslation] = useState<string | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<WordEntry | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [bookmarksPanelOpen, setBookmarksPanelOpen] = useState(false);
+
+  // initialize theme (applies persisted dataset to <html>)
+  useTheme();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -82,7 +111,7 @@ const App = () => {
       }
       if (key === 'v') {
         e.preventDefault();
-        setLyricsModalOpen(true);
+        setSongsManagerOpen(true);
         return;
       }
       if (key === 'b') {
@@ -145,9 +174,9 @@ const App = () => {
       setSidebarOpen(false); // Close sidebar when opening bookmarks
     }
   };
-  const handleSavedSongsClick = () => {
-    setSavedSongsOpen(prev => !prev);
-    if (!savedSongsOpen) setSidebarOpen(false);
+  const handleSongsManagerClick = () => {
+    setSongsManagerOpen(prev => !prev);
+    if (!songsManagerOpen) setSidebarOpen(false);
   };
   if (authLoading || loading) return <LoadingSpinner />;
   if (!user) return <AuthModal isOpen={true} />;
@@ -178,15 +207,14 @@ const App = () => {
   }
   
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col md:flex-row overflow-hidden">
+    <div className="min-h-screen bg-bg text-text font-sans flex flex-col md:flex-row overflow-hidden">
       <div className="flex-1 flex flex-col h-screen overflow-hidden relative z-0 transition-all duration-300">
         <Header
           bookmarkCount={totalBookmarks}
           onBookmarksClick={handleBookmarksClick}
           user={user}
           onLogout={signOut}
-          onOpenLyricsModal={() => setLyricsModalOpen(true)}
-          onOpenSavedSongs={handleSavedSongsClick}
+          onOpenSongsManager={handleSongsManagerClick}
           isProcessing={processing}
           activeTitle={activeTitle}
           activeArtist={activeArtist}
@@ -196,17 +224,17 @@ const App = () => {
             {error && <div className="mb-4"><ErrorDisplay message={error} /></div>}
             {!appData ? (
               processing ? (
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:p-12 w-full max-w-3xl flex flex-col items-center justify-center text-center">
-                  <Loader className="w-10 h-10 text-indigo-600 animate-spin mb-3" />
-                  <h3 className="text-lg font-semibold text-slate-800 mb-1">Loading lyrics…</h3>
-                  <p className="text-sm text-slate-600">Please wait while your lyrics are loaded.</p>
+                <div className="bg-surface rounded-xl shadow-sm border border-border p-8 md:p-12 w-full max-w-3xl flex flex-col items-center justify-center text-center">
+                  <Loader className="w-10 h-10 text-primary animate-spin mb-3" />
+                  <h3 className="text-lg font-semibold text-text mb-1">Loading lyrics…</h3>
+                  <p className="text-sm text-muted">Please wait while your lyrics are loaded.</p>
                 </div>
               ) : (
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-8 md:p-12 w-full max-w-3xl flex flex-col items-center justify-center text-center">
-                  <h2 className="text-2xl font-bold text-slate-800 mb-3">No lyrics loaded</h2>
-                  <p className="text-sm text-slate-600 mb-4">Paste lyrics to analyze them. Use the button below or press <span className="font-mono">Ctrl/Cmd + Shift + V</span>.</p>
+                <div className="bg-surface rounded-xl shadow-sm border border-border p-8 md:p-12 w-full max-w-3xl flex flex-col items-center justify-center text-center">
+                  <h2 className="text-2xl font-bold text-text mb-3">No lyrics loaded</h2>
+                  <p className="text-sm text-muted mb-4">Paste lyrics to analyze them. Use the button below or press <span className="font-mono">Ctrl/Cmd + Shift + V</span>.</p>
                   <div className="flex gap-2">
-                    <button onClick={() => setLyricsModalOpen(true)} className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Paste lyrics</button>
+                    <button onClick={() => setSongsManagerOpen(true)} className="bg-button text-button-text force-button px-4 py-2 rounded hover:opacity-90">Paste lyrics</button>
                   </div>
                 </div>
               )
@@ -217,12 +245,17 @@ const App = () => {
                   selectedWord={selectedWord}
                   wordMap={appData?.word_map || {}}
                   onWordClick={handleWordClick}
-                  onEdit={() => setEditModalOpen(true)}
+                  onEdit={() => {
+                    setSongsManagerOriginal(rawLyrics ?? null);
+                    setSongsManagerInitialTitle(activeTitle);
+                    setSongsManagerInitialArtist(activeArtist);
+                    setSongsManagerOpen(true);
+                  }}
                 />
                 {processing && (
-                  <div className="absolute inset-0 bg-white/60 flex flex-col items-center justify-center rounded-xl">
-                    <Loader className="w-8 h-8 text-indigo-600 animate-spin mb-2" />
-                    <div className="text-sm text-gray-700">Processing lyrics...</div>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl" style={{ backgroundColor: 'rgba(var(--color-surface-rgb),0.6)' }}>
+                    <Loader className="w-8 h-8 text-primary animate-spin mb-2" />
+                    <div className="text-sm text-muted">Processing lyrics...</div>
                   </div>
                 )}
               </div>
@@ -267,76 +300,22 @@ const App = () => {
         getListsForBookmark={getListsForBookmark}
       />
 
-      <LyricsModal
-        isOpen={lyricsModalOpen}
-        onClose={() => setLyricsModalOpen(false)}
-        onSubmit={(payload: { lyrics: string; title?: string | null; artist?: string | null }) => {
-          // close immediately (modal already closes, but ensure) and run processing in background
-          setLyricsModalOpen(false);
-          try {
-            // Save metadata locally (non-blocking)
-            saveSong({ title: payload.title ?? null, artist: payload.artist ?? null, lyrics: payload.lyrics });
-          } catch (err) {
-            console.error('Failed to save song locally', err);
-          }
-          processLyrics(payload.lyrics)
-            .then(() => pushToast('Lyrics processed', 'success'))
-            .catch((err: unknown) => {
-              const msg = err instanceof Error ? err.message : String(err);
-              pushToast(msg || 'Failed to process lyrics', 'error');
-            });
-        }}
-        onClear={() => {
-          clearLyrics();
-          setSelectedWord(null);
-          setSelectedLine(null);
-          setSelectedTranslation(null);
-          // refresh bookmark details so full entries are fetched from backend/cache
-          try {
-            refreshBookmarks();
-          } catch (err) {
-            console.error('Failed to refresh bookmarks after clearing lyrics', err);
-          }
+      <SongsManagerModal
+        isOpen={songsManagerOpen}
+        onClose={() => {
+          setSongsManagerOpen(false);
+          setSongsManagerOriginal(null);
+          setSongsManagerInitialTitle(null);
+          setSongsManagerInitialArtist(null);
         }}
         processing={processing}
         error={error}
-      />
-
-      {/* Edit modal: prefill with current raw lyrics and metadata */}
-      <LyricsModal
-        isOpen={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
-        initialLyrics={rawLyrics ?? null}
-        initialTitle={activeTitle}
-        initialArtist={activeArtist}
-        modalTitle="Edit lyrics"
-        submitLabel="Save"
-        onSubmit={async (payload: { lyrics: string; title?: string | null; artist?: string | null }) => {
-          setEditModalOpen(false);
-          if (rawLyrics == null) {
-            pushToast('No original lyrics to edit', 'error');
-            return;
-          }
-          try {
-            const data = await syncLyrics(rawLyrics, payload.lyrics);
-            pushToast('Lyrics synced', 'success');
-            // If there was a saved song matching the original lyrics, update it
-            try {
-              const songs = listSongs();
-              const match = songs.find(s => s.lyrics === rawLyrics);
-              if (match) {
-                updateSong(match.id, { title: payload.title ?? match.title, artist: payload.artist ?? match.artist, lyrics: payload.lyrics, appData: data, lastProcessedAt: Date.now() });
-              }
-            } catch (err) {
-              console.error('Failed to update saved song after edit', err);
-            }
-          } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : String(err);
-            pushToast(msg || 'Failed to sync lyrics', 'error');
-          }
-        }}
+        initialLyrics={songsManagerOriginal ?? null}
+        initialTitle={songsManagerInitialTitle ?? null}
+        initialArtist={songsManagerInitialArtist ?? null}
+        originalLyrics={songsManagerOriginal ?? null}
+        onProcess={handleSongsManagerProcess}
         onClear={() => {
-          // reuse existing clear behavior
           clearLyrics();
           setSelectedWord(null);
           setSelectedLine(null);
@@ -346,23 +325,6 @@ const App = () => {
           } catch (err) {
             console.error('Failed to refresh bookmarks after clearing lyrics', err);
           }
-        }}
-        processing={processing}
-        error={error}
-      />
-
-      <SavedSongsPanel
-        isOpen={savedSongsOpen}
-        onClose={() => setSavedSongsOpen(false)}
-        onOpen={(song) => {
-          // load the saved song's lyrics and process them
-          setSavedSongsOpen(false);
-          processLyrics(song.lyrics)
-            .then(() => pushToast('Saved song loaded', 'success'))
-            .catch((err: unknown) => {
-              const msg = err instanceof Error ? err.message : String(err);
-              pushToast(msg || 'Failed to process saved song', 'error');
-            });
         }}
       />
 

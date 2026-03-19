@@ -1,1 +1,105 @@
+@import "./styles/fonts.css";
 @import "tailwindcss";
+
+:root {
+	/* Fonts (mapped into Tailwind via tailwind.config.js) */
+	--font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+	--font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
+	--font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono";
+
+	/* Color tokens (light theme) */
+	--color-bg: #fafafa; /* slate-50 */
+	--color-surface: #2b1786;
+	--color-surface-rgb: 255 255 255;
+	--color-primary: #6366f1; /* indigo-600 */
+	--color-primary-rgb: 99 102 241;
+	--color-accent: #00d8ff;
+
+	/* Button accent tokens (editable) */
+	--color-button-bg: #5d8f47; /* same as primary by default */
+	--color-button-text: #000000;
+	--color-button-bg-hover: #4a7a3a;
+	--color-button-text-hover: #ffffff;
+	--color-warning-hover: #c57a1a;
+	--color-warning-bg-hover: #fff4d6;
+	--color-warning-border-hover: #fde9b8;
+	--color-warning-text-hover: #000000;
+
+	/* Warning / amber tokens */
+	--color-warning: #d7ad23; /* amber-700 */
+	--color-warning-rgb: 180 83 9;
+	--color-warning-bg: #fffbeb; /* amber-50 */
+	--color-warning-border: #fef3c7; /* amber-100 */
+	--color-warning-text: #ffffff; /* Added for contrast text color */
+
+	/* Modal / Panel specific surfaces (separate from page background & surface) */
+	--color-modal: var(--color-surface);
+	--color-modal-text: var(--color-text);
+	--color-modal-rgb: var(--color-surface-rgb);
+
+	--color-panel: var(--color-surface);
+	--color-panel-text: var(--color-text);
+	--color-panel-rgb: var(--color-surface-rgb);
+	--color-text: #7d7d7d; /* slate-900 */
+	--color-muted: #6b7280; /* slate-500 */
+	--color-danger: #dc2626;
+	--color-success: #16a34a;
+	--color-border: #0a78e5;
+}
+
+[data-theme="dark"] {
+	--color-bg: #0f172a; /* slate-900 */
+	--color-surface: #0b1220;
+	--color-surface-rgb: 11 18 32;
+	--color-primary: #8b5cf6;
+	--color-primary-rgb: 139 92 246;
+	--color-accent: #00d8ff;
+	--color-text: #e6eef7;
+	--color-muted: #94a3b8;
+	--color-danger: #f87171;
+	--color-success: #34d399;
+	--color-border: #1f2937;
+}
+
+/* Apply base background/text tokens to html/body for consistency */
+html, body {
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	font-family: var(--font-sans);
+}
+
+/* Utility to force button colors from CSS variables (use for debugging/override) */
+.force-button {
+  background-color: var(--color-button-bg) !important;
+  color: var(--color-button-text) !important;
+}
+
+/* Fallback utilities for warning/accent tokens to ensure variables take effect */
+.text-warning { color: var(--color-warning) !important; }
+.text-warning-text { color: var(--color-warning-text) !important; }
+.bg-warning { background-color: var(--color-warning) !important; }
+.bg-warning-bg { background-color: var(--color-warning-bg) !important; }
+.border-warning-border { border-color: var(--color-warning-border) !important; }
+
+/* Modal & Panel fallbacks so their surfaces are controlled via variables */
+.bg-modal { background-color: var(--color-modal) !important; }
+.text-modal-text { color: var(--color-modal-text) !important; }
+.bg-panel { background-color: var(--color-panel) !important; }
+.text-panel-text { color: var(--color-panel-text) !important; }
+
+/* Button hover overrides using variables */
+.bg-button:hover,
+.force-button:hover { background-color: var(--color-button-bg-hover) !important; }
+.text-button-text:hover,
+.bg-button:hover,
+.force-button:hover { color: var(--color-button-text-hover) !important; }
+
+/* Warning hover overrides using variables */
+.text-warning:hover { color: var(--color-warning-hover) !important; }
+.text-warning-text:hover { color: var(--color-warning-text-hover) !important; }
+.bg-warning:hover { background-color: var(--color-warning-hover) !important; }
+.bg-warning-bg:hover { background-color: var(--color-warning-bg-hover) !important; }
+.border-warning-border:hover { border-color: var(--color-warning-border-hover) !important; }
+
+/* Lyrics hover control */
+.lyrics-hover:hover { background-color: var(--color-lyrics-hover-bg) !important; color: var(--color-lyrics-hover-text) !important; }
