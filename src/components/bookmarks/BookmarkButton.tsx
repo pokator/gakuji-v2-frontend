@@ -32,7 +32,7 @@ export const BookmarkButton = ({
               console.error('[BookmarkButton] onOpenListPicker click error', err);
             }
           }}
-          className="p-1 rounded-full text-muted hover:text-text bg-surface hover:bg-surface/95"
+          className="card-list-picker-btn"
           title="Edit lists"
         >
           <List className="w-4 h-4" />
@@ -47,7 +47,7 @@ export const BookmarkButton = ({
             console.error('[BookmarkButton] onClick handler error', err);
           }
         }}
-        className={`p-1.5 rounded-full transition-all duration-200 ${isBookmarked ? 'text-warning hover:text-warning bg-warning-bg hover:bg-warning-border' : 'text-muted hover:text-warning hover:bg-warning-bg'}`}
+        className={`card-bookmark-btn ${isBookmarked ? 'bookmarked' : 'not-bookmarked'}`}
         title={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
       >
         <Bookmark className={sizeClasses[size]} fill={isBookmarked ? 'currentColor' : 'none'} />

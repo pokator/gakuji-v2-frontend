@@ -12,13 +12,13 @@ interface LyricsDisplayProps {
 
 export const LyricsDisplay = ({ lyricsLines, selectedWord, wordMap, onWordClick, onEdit }: LyricsDisplayProps) => {
   return (
-    <div className="relative bg-surface rounded-xl shadow-sm border border-border p-8 md:p-12 w-full max-w-3xl">
+    <div className="relative bg-surface rounded-xl shadow-sm border border-border p-8 md:p-12 w-full max-w-3xl text-surface-text">
       {onEdit ? (
         <div className="absolute right-4 top-4">
           <button
             onClick={onEdit}
             aria-label="Edit lyrics"
-            className="p-2 bg-surface hover:opacity-90 rounded border border-border flex items-center justify-center"
+            className="p-2 bg-surface text-surface-text hover:opacity-90 rounded border border-border flex items-center justify-center"
           >
             <Edit2 className="w-4 h-4 text-muted" />
           </button>

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 interface ToastItem {
   id: string;
   message: string;
@@ -10,14 +12,23 @@ interface ToastsProps {
 }
 
 export const Toasts = ({ toasts, onClose }: ToastsProps) => {
+  const [closingIds, setClosingIds] = useState<Set<string>>(new Set());
+
+  const handleClose = (id: string) => {
+    setClosingIds(prev => new Set([...prev, id]));
+    setTimeout(() => {
+      onClose(id);
+    }, 200);
+  };
+
   if (!toasts || toasts.length === 0) return null;
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
       {toasts.map(t => (
-        <div key={t.id} className={`max-w-sm px-4 py-2 rounded shadow-lg text-sm text-white ${t.type === 'error' ? 'bg-red-600' : t.type === 'success' ? 'bg-green-600' : 'bg-gray-800'}`}>
+        <div key={t.id} className={`max-w-sm px-4 py-2 rounded shadow-lg text-sm text-white toast-item ${closingIds.has(t.id) ? 'closing' : ''} ${t.type === 'error' ? 'bg-red-600' : t.type === 'success' ? 'bg-green-600' : 'bg-gray-800'}`}>
           <div className="flex items-center justify-between gap-3">
             <div>{t.message}</div>
-            <button onClick={() => onClose(t.id)} className="opacity-80 hover:opacity-100">×</button>
+            <button onClick={() => handleClose(t.id)} className="opacity-80 hover:opacity-100">×</button>
           </div>
         </div>
       ))}

@@ -22,7 +22,7 @@ export const BookmarkedWordCard = ({
   onOpenListPicker,
   lists = [],
 }: BookmarkedWordCardProps) => (
-  <div className="bg-surface border border-border rounded-lg p-3 mb-3 shadow-sm hover:shadow-md transition-shadow">
+  <div className="card-word">
     <div className="flex justify-between items-start mb-1">
       <div className="flex items-center gap-2 flex-1">
         <div className="text-lg font-bold text-primary font-sans">
@@ -49,20 +49,20 @@ export const BookmarkedWordCard = ({
     )}
 
     <div className="space-y-2">
-      {(entry.definitions || []).map((def, idx) => (
+      {entry.definitions.map((def, idx) => (
         <div key={idx} className="text-sm">
           <div className="flex flex-wrap gap-1 mb-1">
-            {(def.pos || []).map((p, pIdx) => (
+            {def.pos.map((p, pIdx) => (
               <span
                 key={pIdx}
                 className="text-[10px] uppercase font-bold tracking-wider text-primary bg-surface px-1.5 py-0.5 rounded"
               >
-                {String(p).split(" ")[0]}
+                {p.split(" ")[0]}
               </span>
             ))}
           </div>
           <ul className="list-disc list-inside text-text pl-1">
-            {(def.definition || []).map((d, dIdx) => (
+            {def.definition.map((d, dIdx) => (
               <li key={dIdx} className="leading-tight mb-0.5">
                 {d}
               </li>
@@ -79,7 +79,7 @@ export const BookmarkedWordCard = ({
           .map((l) => (
             <span
               key={String(l.id)}
-              className="text-[11px] bg-surface text-primary px-2 py-0.5 rounded"
+              className="card-list-name-badge"
             >
               {l.name}
             </span>

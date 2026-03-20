@@ -17,13 +17,13 @@ export const DefinitionCard = ({
   onToggleBookmark,
   onOpenListPicker,
 }: DefinitionCardProps) => (
-  <div className="bg-surface border border-border rounded-lg p-3 mb-3 shadow-sm hover:shadow-md transition-shadow">
+  <div className="card-word">
     <div className="flex justify-between items-start mb-1">
       <div className="flex items-center gap-2 flex-1">
         <div className="text-lg font-bold text-primary font-sans">
           {entry.word}
         </div>
-        <div className="text-sm text-muted font-mono bg-surface px-2 py-0.5 rounded">
+        <div className="text-sm text-muted font-mono bg-surface px-2 py-0.5 rounded text-surface-text">
           {entry.furigana}
         </div>
       </div>

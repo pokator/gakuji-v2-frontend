@@ -21,10 +21,10 @@ export const KanjiCard = ({
   onToggleBookmark,
   onOpenListPicker,
 }: KanjiCardProps) => (
-  <div className="bg-warning-bg border border-warning-border rounded-lg p-3 mb-3 shadow-sm">
+  <div className="card-kanji">
     <div className="flex justify-between items-start mb-2">
       <div className="flex items-center gap-3">
-        <div className="text-4xl font-serif text-warning bg-surface rounded w-12 h-12 flex items-center justify-center border border-warning-border">
+        <div className="text-4xl font-serif bg-warning-bg/30 rounded w-12 h-12 flex items-center justify-center border border-warning-text/20 text-warning-text">
           {char}
         </div>
         <div>
@@ -32,7 +32,7 @@ export const KanjiCard = ({
             {data.meanings.slice(0, 3).map((m, i) => (
               <span
                 key={i}
-                className="text-xs font-medium text-warning bg-warning-bg px-1.5 py-0.5 rounded"
+                className="text-xs font-medium text-warning-text bg-warning-text/20 px-1.5 py-0.5 rounded"
               >
                 {m}
               </span>
@@ -40,7 +40,7 @@ export const KanjiCard = ({
           </div>
 
           {data.jlpt_new && (
-            <span className="text-[10px] font-bold text-warning border border-warning-border px-1 rounded">
+            <span className="text-[10px] font-bold text-warning-text border border-warning-text/30 px-1 rounded">
               N{data.jlpt_new}
             </span>
           )}
@@ -65,19 +65,19 @@ export const KanjiCard = ({
     </div>
 
     <div className="grid grid-cols-2 gap-2 text-xs mt-3">
-      <div className="p-2 rounded" style={{ backgroundColor: 'rgba(var(--color-surface-rgb),0.6)' }}>
-        <div className="text-[10px] uppercase text-muted font-bold mb-1">
+      <div className="p-2 rounded" style={{ backgroundColor: 'rgba(var(--color-warning-text), 0.1)' }}>
+        <div className="text-[10px] uppercase text-warning-text/70 font-bold mb-1">
           Onyomi
         </div>
-        <div className="text-gray-800">
+        <div className="text-warning-text">
           {data.readings_on.join("、 ") || "-"}
         </div>
       </div>
-      <div className="p-2 rounded" style={{ backgroundColor: 'rgba(var(--color-surface-rgb),0.6)' }}>
-        <div className="text-[10px] uppercase text-muted font-bold mb-1">
+      <div className="p-2 rounded" style={{ backgroundColor: 'rgba(var(--color-warning-text), 0.1)' }}>
+        <div className="text-[10px] uppercase text-warning-text/70 font-bold mb-1">
           Kunyomi
         </div>
-        <div className="text-gray-800">
+        <div className="text-warning-text">
           {data.readings_kun.join("、 ") || "-"}
         </div>
       </div>
@@ -85,7 +85,7 @@ export const KanjiCard = ({
       <div className="mt-2 flex items-center justify-between text-xs col-span-2">
         {data.radicals && (
           // Applying the single-line fix to the Radicals section
-          <div className="flex items-center gap-1 overflow-hidden min-w-0" style={{ color: 'rgba(var(--color-warning-rgb),0.7)' }}>
+          <div className="flex items-center gap-1 overflow-hidden min-w-0 text-warning-text">
             <span className="font-bold shrink-0">Radicals:</span>
             <span className="truncate whitespace-nowrap min-w-0">
               {data.radicals.join(", ")}
@@ -99,11 +99,11 @@ export const KanjiCard = ({
           )}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-warning hover:underline shrink-0"
+          className="inline-flex items-center gap-1 text-warning-text hover:underline ml-2 shrink-0"
+          aria-label={`Open ${char} on Jisho (kanji)`}
         >
-          {/* Assuming ExternalLink is imported */}
-          <ExternalLink className="h-4 w-4" />
-          <span>Jisho</span>
+          <ExternalLink className="h-3 w-3" />
+          <span className="text-[10px]">Jisho</span>
         </a>
       </div>
     </div>

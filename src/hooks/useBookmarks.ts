@@ -264,8 +264,16 @@ export const useBookmarks = () => {
           cache.setWord(key, { idseq: Number(key) || 0, word: String(key), furigana: '', definitions: [] });
           addLocalWordBookmark(String(key), '', Number.isNaN(Number(key)) ? undefined : Number(key));
         } else if (bookmark_type === 'kanji') {
-          cache.setKanji(key, { meanings: [], readings_on: [], readings_kun: [], radicals: [] });
-          addLocalKanjiBookmark(String(key));
+          // Preserve existing cache data if available, otherwise set empty placeholder
+          const existing = cache.getKanji(key);
+          if (existing) {
+            // Keep the existing cached data with all details
+            cache.setKanji(key, existing);
+            addLocalKanjiBookmark(String(key), existing);
+          } else {
+            cache.setKanji(key, { meanings: [], readings_on: [], readings_kun: [], radicals: [] });
+            addLocalKanjiBookmark(String(key));
+          }
         }
       } catch {}
       const { error } = await supabase.from('bookmark_lists').insert([{ bookmark_id: bookmarkId, list_id: listId }]);

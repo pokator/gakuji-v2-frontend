@@ -41,8 +41,8 @@ const Signup = ({ onSwitchToLogin }: { onSwitchToLogin: () => void }) => {
             className="w-full p-2 border rounded"
             required
           />
-          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Sign Up</button>
-          <p>Already have an account? <button type="button" onClick={onSwitchToLogin} className="text-blue-500">Login</button></p>
+          <button type="submit" className="btn btn-primary w-full">Sign Up</button>
+          <p>Already have an account? <button type="button" onClick={onSwitchToLogin} className="btn btn-secondary text-xs px-2 py-1">Login</button></p>
         </form>
       ) : (
         <div className="p-4 border rounded bg-gray-50">
@@ -50,8 +50,8 @@ const Signup = ({ onSwitchToLogin }: { onSwitchToLogin: () => void }) => {
           <p className="mt-2">We sent a confirmation link to <strong>{email}</strong>. Please check your inbox (and spam) and click the link to verify your email.</p>
           <p className="mt-2">After confirming, click the button below to go to the login page.</p>
           <div className="mt-4 flex gap-2">
-            <button onClick={onSwitchToLogin} className="bg-green-600 text-white px-4 py-2 rounded">Go to Login</button>
-            <button onClick={() => setSignedUp(false)} className="bg-gray-200 px-4 py-2 rounded">Back</button>
+            <button onClick={onSwitchToLogin} className="btn btn-primary flex-1">Go to Login</button>
+            <button onClick={() => setSignedUp(false)} className="btn btn-secondary flex-1">Back</button>
           </div>
         </div>
       )}

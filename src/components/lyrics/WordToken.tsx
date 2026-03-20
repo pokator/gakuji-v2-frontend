@@ -9,11 +9,11 @@ export const WordToken = ({ word, isSelected, hasDefinitions, onClick }: WordTok
   <button
     onClick={onClick}
     className={`
-      relative px-1 py-0.5 rounded transition-all duration-200
+      word-token
       ${isSelected 
-        ? 'bg-primary text-white shadow-md scale-105 z-10' 
-        : 'lyrics-hover text-text'}
-      ${!hasDefinitions && !isSelected ? 'cursor-default opacity-80' : 'cursor-pointer'}
+        ? 'word-token-selected' 
+        : 'word-token-default'}
+      ${!hasDefinitions && !isSelected ? 'word-token-disabled' : ''}
     `}
   >
     {word}

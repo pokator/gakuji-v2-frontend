@@ -21,19 +21,32 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
   const [artist, setArtist] = useState<string>('');
   const [localError, setLocalError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     if (isOpen) {
+      setIsClosing(false);
       setLocalError(null);
       setValue(initialLyrics ?? '');
       setTitle(initialTitle ?? '');
       setArtist(initialArtist ?? '');
       setTimeout(() => textareaRef.current?.focus(), 100);
     }
+  }, [isOpen, initialLyrics, initialTitle, initialArtist]);
+
+  useEffect(() => {
+    setIsClosing(false);
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !isClosing) return null;
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 200);
+  };
 
   const handleSubmit = async () => {
     const trimmed = value.trim();
@@ -46,7 +59,7 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
     try {
       // await caller's handler so modal can show errors / spinner until complete
       await Promise.resolve(onSubmit({ lyrics: trimmed, title: title.trim() || null, artist: artist.trim() || null }));
-      onClose();
+      handleClose();
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : String(err) || 'Failed to process lyrics');
     } finally {
@@ -56,74 +69,76 @@ export const LyricsModal = ({ isOpen, onClose, onSubmit, onClear, processing, er
 
   const handleClear = () => {
     onClear();
-    onClose();
+    handleClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-surface rounded-lg w-[min(90%,700px)] p-4 shadow-lg">
-        <div className="flex justify-between items-center mb-3 text-button-text">
-          <h3 className="font-bold">{modalTitle ?? 'Paste lyrics'}</h3>
-          <button onClick={onClose} className="text-muted hover:text-text">Close</button>
-        </div>
+    <>
+      <div className={`fixed inset-0 z-50 flex items-center justify-center pointer-events-none modal-overlay-container ${isClosing ? 'closing' : ''}`}>
+        <div className={`songs-manager-modal rounded-lg w-[min(90%,700px)] p-4 shadow-lg pointer-events-auto ${isClosing ? 'closing' : ''}`}>
+          <div className="flex justify-between items-center mb-3 text-surface-text">
+            <h3 className="font-bold">{modalTitle ?? 'Paste lyrics'}</h3>
+            <button onClick={handleClose} className="text-muted hover:text-text">Close</button>
+          </div>
 
-        <div className="space-y-2">
-          <div className="flex gap-2">
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Title (optional)"
-              className="flex-1 border rounded p-2 text-sm"
-              disabled={processing}
-            />
-            <input
-              value={artist}
-              onChange={(e) => setArtist(e.target.value)}
-              placeholder="Artist (optional)"
-              className="flex-1 border rounded p-2 text-sm"
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Title (optional)"
+                className="flex-1 border rounded p-2 text-sm"
+                disabled={processing}
+              />
+              <input
+                value={artist}
+                onChange={(e) => setArtist(e.target.value)}
+                placeholder="Artist (optional)"
+                className="flex-1 border rounded p-2 text-sm"
+                disabled={processing}
+              />
+            </div>
+
+            <textarea
+              ref={textareaRef}
+              className="w-full h-56 border rounded p-2 text-sm font-medium text-text"
+              placeholder="Paste raw lyrics here (preserve new lines / sections)..."
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
               disabled={processing}
             />
           </div>
 
-          <textarea
-            ref={textareaRef}
-            className="w-full h-56 border rounded p-2 text-sm font-medium text-text"
-            placeholder="Paste raw lyrics here (preserve new lines / sections)..."
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            disabled={processing}
-          />
-        </div>
-
-        <div className="mt-3">
-          {(localError || error) && (
-            <div className="mb-2">
-              <ErrorDisplay message={localError || error || ''} />
-            </div>
-          )}
+          <div className="mt-3">
+            {(localError || error) && (
+              <div className="mb-2">
+                <ErrorDisplay message={localError || error || ''} />
+              </div>
+            )}
 
             <div className="flex justify-end gap-2">
-            <button
-              onClick={handleClear}
-              className="px-3 py-1 rounded bg-surface hover:opacity-90"
-              disabled={processing || submitting}
-            >
-              Clear lyrics
-            </button>
-            <button
-              onClick={handleSubmit}
-              className={`px-4 py-1 rounded bg-button text-button-text flex items-center gap-2 ${(processing || submitting) ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90'}`}
-              disabled={processing || submitting}
-            >
-              {(processing || submitting) ? (
-                <span className="w-3 h-3 rounded-full bg-white animate-pulse" />
-              ) : null}
-              {submitLabel ?? 'Send'}
-            </button>
+              <button
+                onClick={handleClear}
+                className="btn btn-secondary"
+                disabled={processing || submitting}
+              >
+                Clear lyrics
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="btn btn-primary disabled:opacity-50"
+                disabled={processing || submitting}
+              >
+                {(processing || submitting) ? (
+                  <span className="w-3 h-3 rounded-full bg-current animate-pulse" />
+                ) : null}
+                {submitLabel ?? 'Send'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

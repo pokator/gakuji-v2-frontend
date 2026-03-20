@@ -7,7 +7,7 @@ interface KanjiSectionProps {
   selectedWord: string;
   appData: AppData | null;
   isKanjiBookmarked: (char: string) => boolean;
-  onToggleKanjiBookmark: (char: string, meanings: string[]) => void;
+  onToggleKanjiBookmark: (charOrBookmark: string | BookmarkedKanji) => void;
   onOpenListPicker?: (bookmarkType: 'word' | 'kanji', key: string) => void;
 }
 
@@ -20,14 +20,13 @@ export const KanjiSection = ({
 }: KanjiSectionProps) => {
   const kanjiList = getKanjiInWord(appData, selectedWord);
 
-  const handleToggleBookmark = (charOrBookmark: string | BookmarkedKanji, meanings?: string[]) => {
-    const char = typeof charOrBookmark === 'string' ? charOrBookmark : charOrBookmark.char;
-    onToggleKanjiBookmark(char, meanings ?? []);
+  const handleToggleBookmark = (charOrBookmark: string | BookmarkedKanji) => {
+    onToggleKanjiBookmark(charOrBookmark);
   };
   
   return (
     <section>
-      <div className="flex items-center gap-2 mb-3 text-warning">
+      <div className="flex items-center gap-2 mb-3 text-secondary">
         <Type size={16} />
         <h3 className="text-sm font-bold uppercase tracking-wider">Kanji Breakdown</h3>
       </div>

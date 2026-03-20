@@ -2,104 +2,1343 @@
 @import "tailwindcss";
 
 :root {
-	/* Fonts (mapped into Tailwind via tailwind.config.js) */
+	/* ============================================
+	   FONTS (mapped into Tailwind via tailwind.config.js)
+	   ============================================ */
 	--font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 	--font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
 	--font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono";
 
-	/* Color tokens (light theme) */
-	--color-bg: #fafafa; /* slate-50 */
-	--color-surface: #2b1786;
-	--color-surface-rgb: 255 255 255;
-	--color-primary: #6366f1; /* indigo-600 */
-	--color-primary-rgb: 99 102 241;
-	--color-accent: #00d8ff;
+	/* ============================================
+	   LIGHT THEME - Base Color Palette
+	   ============================================ */
+	
+	/* Page Background & Text */
+	--color-bg: #E8E5DA;
+	--color-bg-text: #283044;
+	
+	/* Surfaces (cards, panels, modals) */
+	--color-surface: hsl(47, 23%, 75%);
+	--color-surface-text: #283044;
+	--color-surface-rgb: 255, 255, 255;
+	
+	/* Borders */
+	--color-border: #000000;
+	
+	/* Primary - Main brand/action color */
+	--color-primary: #3b82f6;
+	--color-primary-text: #ffffff;
+	--color-primary-rgb: 59, 130, 246;
+	
+	/* Secondary - Accent/Bookmark color */
+	--color-secondary: #f59e0b;
+	--color-secondary-text: #ffffff;
+	--color-secondary-rgb: 245, 158, 11;
+	
+	/* Semantic - State colors */
+	--color-success: #10b981;
+	--color-danger: #ef4444;
+	--color-muted: #6b7280;
+	--color-muted-text: #9ca3af;
+	
+	/* Button States - Primary Button */
+	--btn-primary-bg: hsl(4, 56%, 43%);
+	--btn-primary-bg-hover: hsl(4, 56%, 20%);
+	--btn-primary-text: #ffffff;
+	--btn-primary-text-hover: #ffffff;
+	
+	/* Button States - Secondary Button */
+	--btn-secondary-bg: #f59e0b;
+	--btn-secondary-bg-hover: #d97706;
+	--btn-secondary-text: #ffffff;
+	--btn-secondary-text-hover: #ffffff;
+	
+	/* Button States - Delete/Warning Button */
+	--btn-danger-bg: rgba(239, 68, 68, 0.0);
+	--btn-danger-bg-hover: rgba(239, 68, 68, 0.0);
+	--btn-danger-text: rgba(40, 48, 68, 0.7);
+	--btn-danger-text-hover: rgba(235, 29, 29, 0.7);
+	
+	/* Button States - Accent Button (Bookmarks) */
+	--btn-accent-bg: #f59e0b;
+	--btn-accent-bg-hover: #d97706;
+	--btn-accent-text: #ffffff;
+	--btn-accent-text-hover: #ffffff;
+	
+	/* Modal & Panel Overlays */
+	--color-overlay-bg: rgba(0, 0, 0, 0.5);
+	--color-panel-bg: var(--color-surface);
 
-	/* Button accent tokens (editable) */
-	--color-button-bg: #5d8f47; /* same as primary by default */
-	--color-button-text: #000000;
-	--color-button-bg-hover: #4a7a3a;
-	--color-button-text-hover: #ffffff;
-	--color-warning-hover: #c57a1a;
-	--color-warning-bg-hover: #fff4d6;
-	--color-warning-border-hover: #fde9b8;
-	--color-warning-text-hover: #000000;
+	/* ============================================
+	   BOOKMARKS PANEL - Component-specific styling
+	   (Inherit from main colors by default, override as needed)
+	   ============================================ */
+	
+	/* Bookmark Icon Button (Header) */
+	--bookmark-icon-btn-bg: transparent;
+	--bookmark-icon-btn-hover: var(--color-surface);
+	--bookmark-icon-color: var(--color-muted);
+	--bookmark-icon-color-hover: var(--color-secondary);
+	
+	/* Bookmark Counter (Header badge) */
+	--bookmark-counter-bg: var(--color-secondary);
+	--bookmark-counter-text: var(--color-secondary-text);
+	
+	/* Bookmarks Panel Header */
+	--bookmark-header-bg: var(--color-surface);
+	--bookmark-header-text: var(--color-surface-text);
+	--bookmark-header-icon: var(--color-secondary);
+	--bookmark-header-border: var(--color-border);
+	
+	/* Bookmarks Panel Close Button */
+	--bookmark-close-btn-text: var(--color-muted);
+	--bookmark-close-btn-text-hover: var(--color-surface-text);
+	--bookmark-close-btn-hover-bg: var(--color-surface);
+	
+	/* Bookmarks Panel Content */
+	--bookmark-body-bg: var(--color-surface);
+	--bookmark-body-text: var(--color-surface-text);
+	--bookmark-filter-text: var(--color-muted);
+	
+	/* Section Titles & Counters */
+	--bookmark-section-title-words: var(--color-primary);
+	--bookmark-section-title-kanji: var(--color-secondary);
+	--bookmark-section-counter-bg: var(--color-surface);
+	--bookmark-section-counter-words: var(--color-primary);
+	--bookmark-section-counter-kanji: var(--color-secondary);
 
-	/* Warning / amber tokens */
-	--color-warning: #d7ad23; /* amber-700 */
-	--color-warning-rgb: 180 83 9;
-	--color-warning-bg: #fffbeb; /* amber-50 */
-	--color-warning-border: #fef3c7; /* amber-100 */
-	--color-warning-text: #ffffff; /* Added for contrast text color */
+	/* ============================================
+	   SIDEBAR - Token selector panel styling
+	   (Aligned with bookmarks panel for consistency)
+	   ============================================ */
+	
+	/* Sidebar Header */
+	--sidebar-header-bg: var(--color-surface);
+	--sidebar-header-text: var(--color-surface-text);
+	--sidebar-header-border: var(--color-border);
+	--sidebar-header-title-color: var(--color-primary);
+	
+	/* Sidebar Close Button */
+	--sidebar-close-btn-text: var(--color-muted);
+	--sidebar-close-btn-text-hover: var(--color-surface-text);
+	--sidebar-close-btn-hover-bg: var(--color-surface);
+	
+	/* Sidebar Content */
+	--sidebar-body-bg: var(--color-surface);
+	--sidebar-body-text: var(--color-surface-text);
+	--sidebar-line-bg: var(--color-surface);
+	--sidebar-line-text: var(--color-surface-text);
+	
+	/* Sidebar Section Labels */
+	--sidebar-label-text: var(--color-muted);
 
-	/* Modal / Panel specific surfaces (separate from page background & surface) */
-	--color-modal: var(--color-surface);
-	--color-modal-text: var(--color-text);
-	--color-modal-rgb: var(--color-surface-rgb);
-
-	--color-panel: var(--color-surface);
-	--color-panel-text: var(--color-text);
-	--color-panel-rgb: var(--color-surface-rgb);
-	--color-text: #7d7d7d; /* slate-900 */
-	--color-muted: #6b7280; /* slate-500 */
-	--color-danger: #dc2626;
-	--color-success: #16a34a;
-	--color-border: #0a78e5;
+	/* ============================================
+	   CARD COMPONENTS - Word, Kanji, Definition styling
+	   ============================================ */
+	
+	/* Warning color for Kanji cards */
+	--color-warning: hsl(24, 70%, 60%);
+	--color-warning-text: #ffffff;
+	--color-warning-rgb: 220, 109, 46;
+	--color-warning-border: hsl(24, 70%, 50%);
+	
+	/* Card List Name Badges */
+	--card-list-badge-bg: rgba(var(--color-secondary-rgb), 0.15);
+	--card-list-badge-text: var(--color-secondary);
+	--card-list-badge-border: rgba(var(--color-secondary-rgb), 0.3);
 }
 
-[data-theme="dark"] {
-	--color-bg: #0f172a; /* slate-900 */
-	--color-surface: #0b1220;
-	--color-surface-rgb: 11 18 32;
-	--color-primary: #8b5cf6;
-	--color-primary-rgb: 139 92 246;
-	--color-accent: #00d8ff;
-	--color-text: #e6eef7;
-	--color-muted: #94a3b8;
-	--color-danger: #f87171;
+/* Dark theme: can be triggered by system preference OR data-theme attribute */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		/* ============================================
+		   DARK THEME
+		   ============================================ */
+		
+		/* Page Background & Text */
+		--color-bg: #0f172a;
+		--color-bg-text: #f3f4f6;
+		
+		/* Surfaces (cards, panels, modals) */
+		--color-surface: #1e293b;
+		--color-surface-text: #f3f4f6;
+		--color-surface-rgb: 30, 41, 59;
+		
+		/* Borders */
+		--color-border: #334155;
+		
+		/* Primary */
+		--color-primary: #60a5fa;
+		--color-primary-text: #1a1a1a;
+		--color-primary-rgb: 96, 165, 250;
+		
+		/* Secondary */
+		--color-secondary: #fbbf24;
+		--color-secondary-text: #1a1a1a;
+		--color-secondary-rgb: 251, 191, 36;
+		
+		/* Semantic */
+		--color-success: #34d399;
+		--color-danger: #f87171;
+		--color-muted: #9ca3af;
+		--color-muted-text: #6b7280;
+				/* Button States - Primary Button */
+		--btn-primary-bg: #60a5fa;
+		--btn-primary-bg-hover: #3b82f6;
+		--btn-primary-text: #1a1a1a;
+		--btn-primary-text-hover: #1a1a1a;
+		
+		/* Button States - Secondary Button */
+		--btn-secondary-bg: #fbbf24;
+		--btn-secondary-bg-hover: #f59e0b;
+		--btn-secondary-text: #1a1a1a;
+		--btn-secondary-text-hover: #1a1a1a;
+		
+		/* Button States - Delete/Warning Button */
+		--btn-danger-bg: #f87171;
+		--btn-danger-bg-hover: #ef4444;
+		--btn-danger-text: #1a1a1a;
+		--btn-danger-text-hover: #1a1a1a;
+		
+		/* Button States - Accent Button */
+		--btn-accent-bg: #fbbf24;
+		--btn-accent-bg-hover: #f59e0b;
+		--btn-accent-text: #1a1a1a;
+		--btn-accent-text-hover: #1a1a1a;
+				/* Modal & Panel Overlays */
+		--color-overlay-bg: rgba(0, 0, 0, 0.6);
+		--color-panel-bg: #ac1b1b;
+		
+		/* ============================================
+		   BOOKMARKS PANEL - Dark theme
+		   ============================================ */
+		
+		/* Bookmark Icon Button (Header) */
+		--bookmark-icon-btn-bg: transparent;
+		--bookmark-icon-btn-hover: rgba(241, 89, 34, 0.1);
+		--bookmark-icon-color: var(--color-muted);
+		--bookmark-icon-color-hover: var(--color-secondary);
+		
+		/* Bookmark Counter (Header badge) */
+		--bookmark-counter-bg: var(--color-secondary);
+		--bookmark-counter-text: var(--color-secondary-text);
+		
+		/* Bookmarks Panel Header */
+		--bookmark-header-bg: var(--color-surface);
+		--bookmark-header-text: var(--color-surface-text);
+		--bookmark-header-icon: var(--color-secondary);
+		--bookmark-header-border: var(--color-border);
+		
+		/* Bookmarks Panel Close Button */
+		--bookmark-close-btn-text: var(--color-muted);
+		--bookmark-close-btn-text-hover: var(--color-surface-text);
+		--bookmark-close-btn-hover-bg: rgba(241, 89, 34, 0.1);
+		
+		/* Bookmarks Panel Content */
+		--bookmark-body-bg: var(--color-surface);
+		--bookmark-body-text: var(--color-surface-text);
+		--bookmark-filter-text: var(--color-muted);
+		
+		/* Section Titles & Counters */
+		--bookmark-section-title-words: var(--color-primary);
+		--bookmark-section-title-kanji: var(--color-secondary);
+		--bookmark-section-counter-bg: var(--color-surface);
+		--bookmark-section-counter-words: var(--color-primary);
+		--bookmark-section-counter-kanji: var(--color-secondary);
+		
+		/* ============================================
+		   SIDEBAR - Dark theme
+		   ============================================ */
+		
+		/* Sidebar Header */
+		--sidebar-header-bg: var(--color-surface);
+		--sidebar-header-text: var(--color-surface-text);
+		--sidebar-header-border: var(--color-border);
+		--sidebar-header-title-color: var(--color-primary);
+		
+		/* Sidebar Close Button */
+		--sidebar-close-btn-text: var(--color-muted);
+		--sidebar-close-btn-text-hover: var(--color-surface-text);
+		--sidebar-close-btn-hover-bg: rgba(251, 191, 36, 0.1);
+		
+		/* Sidebar Content */
+		--sidebar-body-bg: var(--color-surface);
+		--sidebar-body-text: var(--color-surface-text);
+		--sidebar-line-bg: var(--color-surface);
+		--sidebar-line-text: var(--color-surface-text);
+		
+		/* Sidebar Section Labels */
+		--sidebar-label-text: var(--color-muted);
+
+		/* ============================================
+		   CARD COMPONENTS - Dark theme
+		   ============================================ */
+		
+		/* Warning color for Kanji cards */
+		--color-warning: hsl(24, 60%, 50%);
+		--color-warning-text: #ffffff;
+		--color-warning-rgb: 194, 87, 33;
+		--color-warning-border: hsl(24, 60%, 40%);
+		
+		/* Card List Name Badges */
+		--card-list-badge-bg: rgba(var(--color-secondary-rgb), 0.2);
+		--card-list-badge-text: var(--color-secondary);
+		--card-list-badge-border: rgba(var(--color-secondary-rgb), 0.4);
+	}
+}
+
+/* Manual dark theme override via data-theme attribute */
+:root[data-theme="dark"] {
+	/* ============================================
+	   DARK THEME (Manual override)
+	   ============================================ */
+	
+	/* Page Background & Text */
+	--color-bg: #0f172a;
+	--color-bg-text: #f3f4f6;
+	
+	/* Surfaces (cards, panels, modals) */
+	--color-surface: #1e293b;
+	--color-surface-text: #f3f4f6;
+	--color-surface-rgb: 30, 41, 59;
+	
+	/* Borders */
+	--color-border: #334155;
+	
+	/* Primary */
+	--color-primary: #60a5fa;
+	--color-primary-text: #1a1a1a;
+	--color-primary-rgb: 96, 165, 250;
+	
+	/* Secondary */
+	--color-secondary: #fbbf24;
+	--color-secondary-text: #1a1a1a;
+	--color-secondary-rgb: 251, 191, 36;
+	
+	/* Semantic */
 	--color-success: #34d399;
-	--color-border: #1f2937;
+	--color-danger: #f87171;
+	--color-muted: #9ca3af;
+	--color-muted-text: #6b7280;
+	
+	/* Button States - Primary Button */
+	--btn-primary-bg: #60a5fa;
+	--btn-primary-bg-hover: #3b82f6;
+	--btn-primary-text: #1a1a1a;
+	--btn-primary-text-hover: #1a1a1a;
+	
+	/* Button States - Secondary Button */
+	--btn-secondary-bg: #fbbf24;
+	--btn-secondary-bg-hover: #f59e0b;
+	--btn-secondary-text: #1a1a1a;
+	--btn-secondary-text-hover: #1a1a1a;
+	
+	/* Button States - Delete/Warning Button */
+	--btn-danger-bg: #f87171;
+	--btn-danger-bg-hover: #ef4444;
+	--btn-danger-text: #1a1a1a;
+	--btn-danger-text-hover: #1a1a1a;
+	
+	/* Button States - Accent Button */
+	--btn-accent-bg: #fbbf24;
+	--btn-accent-bg-hover: #f59e0b;
+	--btn-accent-text: #1a1a1a;
+	--btn-accent-text-hover: #1a1a1a;
+	
+	/* Modal & Panel Overlays */
+	--color-overlay-bg: rgba(0, 0, 0, 0.6);
+	--color-panel-bg: #1e293b;
+
+	/* ============================================
+	   BOOKMARKS PANEL - Dark theme manual override
+	   ============================================ */
+	
+	/* Bookmark Icon Button (Header) */
+	--bookmark-icon-btn-bg: transparent;
+	--bookmark-icon-btn-hover: rgba(251, 191, 36, 0.1);
+	--bookmark-icon-color: var(--color-muted);
+	--bookmark-icon-color-hover: var(--color-secondary);
+	
+	/* Bookmark Counter (Header badge) */
+	--bookmark-counter-bg: var(--color-secondary);
+	--bookmark-counter-text: var(--color-secondary-text);
+	
+	/* Bookmarks Panel Header */
+	--bookmark-header-bg: var(--color-surface);
+	--bookmark-header-text: var(--color-surface-text);
+	--bookmark-header-icon: var(--color-secondary);
+	--bookmark-header-border: var(--color-border);
+	
+	/* Bookmarks Panel Close Button */
+	--bookmark-close-btn-text: var(--color-muted);
+	--bookmark-close-btn-text-hover: var(--color-surface-text);
+	--bookmark-close-btn-hover-bg: rgba(251, 191, 36, 0.1);
+	
+	/* Bookmarks Panel Content */
+	--bookmark-body-bg: var(--color-surface);
+	--bookmark-body-text: var(--color-surface-text);
+	--bookmark-filter-text: var(--color-muted);
+	
+	/* Section Titles & Counters */
+	--bookmark-section-title-words: var(--color-primary);
+	--bookmark-section-title-kanji: var(--color-secondary);
+	--bookmark-section-counter-bg: var(--color-surface);
+	--bookmark-section-counter-words: var(--color-primary);
+	--bookmark-section-counter-kanji: var(--color-secondary);
+
+	/* ============================================
+	   SIDEBAR - Dark theme manual override
+	   ============================================ */
+	
+	/* Sidebar Header */
+	--sidebar-header-bg: var(--color-surface);
+	--sidebar-header-text: var(--color-surface-text);
+	--sidebar-header-border: var(--color-border);
+	--sidebar-header-title-color: var(--color-primary);
+	
+	/* Sidebar Close Button */
+	--sidebar-close-btn-text: var(--color-muted);
+	--sidebar-close-btn-text-hover: var(--color-surface-text);
+	--sidebar-close-btn-hover-bg: rgba(251, 191, 36, 0.1);
+	
+	/* Sidebar Content */
+	--sidebar-body-bg: var(--color-surface);
+	--sidebar-body-text: var(--color-surface-text);
+	--sidebar-line-bg: var(--color-surface);
+	--sidebar-line-text: var(--color-surface-text);
+	
+	/* Sidebar Section Labels */
+	--sidebar-label-text: var(--color-muted);
+
+	/* ============================================
+	   CARD COMPONENTS - Manual dark theme override
+	   ============================================ */
+	
+	/* Warning color for Kanji cards */
+	--color-warning: hsl(24, 60%, 50%);
+	--color-warning-text: #ffffff;
+	--color-warning-rgb: 194, 87, 33;
+	--color-warning-border: hsl(24, 60%, 40%);
+	
+	/* Card List Name Badges */
+	--card-list-badge-bg: rgba(var(--color-secondary-rgb), 0.2);
+	--card-list-badge-text: var(--color-secondary);
+	--card-list-badge-border: rgba(var(--color-secondary-rgb), 0.4);
 }
 
-/* Apply base background/text tokens to html/body for consistency */
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
 html, body {
 	background-color: var(--color-bg);
-	color: var(--color-text);
+	color: var(--color-bg-text);
 	font-family: var(--font-sans);
 }
 
-/* Utility to force button colors from CSS variables (use for debugging/override) */
-.force-button {
-  background-color: var(--color-button-bg) !important;
-  color: var(--color-button-text) !important;
+/* ============================================
+   COMPONENT-SPECIFIC CUSTOMIZATION
+   (Edit these to override default colors for specific component types)
+   ============================================ */
+
+/* Buttons */
+.btn-default {
+	background-color: var(--color-primary);
+	color: var(--color-primary-text);
+}
+.btn-default:hover {
+	opacity: 0.9;
 }
 
-/* Fallback utilities for warning/accent tokens to ensure variables take effect */
-.text-warning { color: var(--color-warning) !important; }
-.text-warning-text { color: var(--color-warning-text) !important; }
-.bg-warning { background-color: var(--color-warning) !important; }
-.bg-warning-bg { background-color: var(--color-warning-bg) !important; }
-.border-warning-border { border-color: var(--color-warning-border) !important; }
+/* Cards & Surface Content */
+.card {
+	background-color: var(--color-surface);
+	color: var(--color-surface-text);
+	border-color: var(--color-border);
+}
 
-/* Modal & Panel fallbacks so their surfaces are controlled via variables */
-.bg-modal { background-color: var(--color-modal) !important; }
-.text-modal-text { color: var(--color-modal-text) !important; }
-.bg-panel { background-color: var(--color-panel) !important; }
-.text-panel-text { color: var(--color-panel-text) !important; }
+/* Secondary/Accent (Bookmarks, badges) */
+.accent {
+	color: var(--color-secondary);
+}
+.accent-bg {
+	background-color: var(--color-secondary);
+	color: var(--color-secondary-text);
+}
 
-/* Button hover overrides using variables */
-.bg-button:hover,
-.force-button:hover { background-color: var(--color-button-bg-hover) !important; }
-.text-button-text:hover,
-.bg-button:hover,
-.force-button:hover { color: var(--color-button-text-hover) !important; }
+/* ============================================
+   TRANSITIONS & ANIMATIONS - Modals, Panels, Overlays
+   ============================================ */
 
-/* Warning hover overrides using variables */
-.text-warning:hover { color: var(--color-warning-hover) !important; }
-.text-warning-text:hover { color: var(--color-warning-text-hover) !important; }
-.bg-warning:hover { background-color: var(--color-warning-hover) !important; }
-.bg-warning-bg:hover { background-color: var(--color-warning-bg-hover) !important; }
-.border-warning-border:hover { border-color: var(--color-warning-border-hover) !important; }
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
 
-/* Lyrics hover control */
-.lyrics-hover:hover { background-color: var(--color-lyrics-hover-bg) !important; color: var(--color-lyrics-hover-text) !important; }
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes slideInFromRight {
+	from {
+		transform: translateX(100%);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slideOutToRight {
+	from {
+		transform: translateX(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateX(100%);
+		opacity: 0;
+	}
+}
+
+@keyframes slideInFromCenter {
+	from {
+		transform: scale(0.95) translateY(-20px);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1) translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slideOutToCenter {
+	from {
+		transform: scale(1) translateY(0);
+		opacity: 1;
+	}
+	to {
+		transform: scale(0.95) translateY(-20px);
+		opacity: 0;
+	}
+}
+
+@keyframes slideInFromBottom {
+	from {
+		transform: translateY(100%);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slideOutToBottom {
+	from {
+		transform: translateY(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateY(100%);
+		opacity: 0;
+	}
+}
+
+/* Modal & Panel Utilities */
+.modal-overlay {
+	background-color: var(--color-overlay-bg);
+	animation: fadeIn 0.2s ease-out;
+}
+
+.modal-overlay.closing {
+	animation: fadeOut 0.2s ease-out forwards !important;
+}
+
+.panel-overlay {
+	position: fixed;
+	inset: 0;
+	background-color: var(--color-overlay-bg);
+	z-index: 30;
+	animation: fadeIn 0.2s ease-out;
+}
+
+.panel-overlay.closing {
+	animation: fadeOut 0.2s ease-out forwards !important;
+}
+
+.panel-bg {
+	background-color: var(--color-panel-bg);
+}
+
+/* Modal Content Container */
+.modal-content {
+	animation: slideInFromCenter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-content.closing {
+	animation: slideOutToCenter 0.2s ease-in forwards !important;
+}
+
+.modal-overlay-container {
+	animation: fadeIn 0.2s ease-out;
+}
+
+.modal-overlay-container.closing {
+	animation: fadeOut 0.2s ease-out forwards !important;
+}
+
+/* Specific Modal Styling */
+.songs-manager-modal {
+	background-color: var(--color-surface);
+	color: var(--color-surface-text);
+	animation: slideInFromCenter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.songs-manager-modal.closing {
+	animation: slideOutToCenter 0.2s ease-in forwards !important;
+}
+
+/* ============================================
+   BOOKMARKS PANEL - Utility Classes
+   ============================================ */
+
+/* Bookmark Icon Button - for Header bookmark button */
+.bookmark-icon-btn {
+	background-color: var(--bookmark-icon-btn-bg);
+	transition: 150ms ease-in-out;
+}
+
+.bookmark-icon-btn:hover {
+	background-color: var(--bookmark-icon-btn-hover);
+}
+
+.bookmark-icon {
+	color: var(--bookmark-icon-color);
+	transition: color 150ms ease-in-out;
+}
+
+.bookmark-icon-btn:hover .bookmark-icon {
+	color: var(--bookmark-icon-color-hover);
+}
+
+/* Bookmark Counter Badge - for Header counter */
+.bookmark-counter {
+	background-color: var(--bookmark-counter-bg);
+	color: var(--bookmark-counter-text);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 9999px;
+	font-size: 0.75rem;
+	font-weight: 700;
+	position: absolute;
+	right: -0.25rem;
+	top: -0.25rem;
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+/* Bookmarks Panel Header */
+.bookmarks-header {
+	background-color: var(--bookmark-header-bg);
+	color: var(--bookmark-header-text);
+	border-color: var(--bookmark-header-border);
+	padding: 1.25rem;
+	border-bottom: 1px solid var(--bookmark-header-border);
+}
+
+.bookmarks-header-title {
+	color: var(--bookmark-header-text);
+	font-weight: 700;
+	font-size: 1.25rem;
+}
+
+.bookmarks-header-icon {
+	color: var(--bookmark-header-icon);
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.bookmarks-header-subtitle {
+	color: var(--color-muted);
+	font-size: 0.875rem;
+}
+
+/* Bookmarks Panel Close Button */
+.bookmarks-close-btn {
+	color: var(--bookmark-close-btn-text);
+	padding: 0.5rem;
+	border-radius: 9999px;
+	transition: all 150ms ease-in-out;
+}
+
+.bookmarks-close-btn:hover {
+	background-color: var(--bookmark-close-btn-hover-bg);
+	color: var(--bookmark-close-btn-text-hover);
+}
+
+/* Bookmarks Panel Content */
+.bookmarks-content {
+	background-color: var(--bookmark-body-bg);
+	color: var(--bookmark-body-text);
+	flex: 1;
+	overflow-y: auto;
+	padding: 1.25rem;
+}
+
+/* Filter Controls */
+.bookmarks-filter {
+	color: var(--bookmark-filter-text);
+	font-size: 0.875rem;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+}
+/* ============================================
+   CUSTOM FILTER DROPDOWN COMPONENT
+   ============================================ */
+
+.filter-dropdown-container {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	width: 100%;
+}
+
+.filter-dropdown-label {
+	color: var(--bookmark-filter-text);
+	font-size: 0.875rem;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.filter-dropdown-label:empty {
+	display: none;
+}
+
+.filter-dropdown-trigger {
+	/* Reset button styles */
+	border: none;
+	background: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	cursor: pointer;
+	
+	/* Custom styling */
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 0.875rem;
+	width: 100%;
+	
+	/* Colors and borders */
+	background-color: transparent;
+	color: var(--color-surface-text);
+	border: none;
+	border-radius: 0.625rem;
+	
+	/* Typography */
+	font-weight: 500;
+	font-size: 0.875rem;
+	
+	/* Transitions & effects */
+	transition: all 150ms ease-in-out;
+	box-shadow: none;
+	
+	/* Ensure proper alignment */
+	justify-content: space-between;
+}
+
+.filter-dropdown-trigger:hover {
+	background-color: transparent;
+}
+
+.filter-dropdown-trigger:focus-visible {
+	outline: none;
+	background-color: rgba(var(--color-secondary-rgb), 0.08);
+}
+
+.filter-dropdown-chevron {
+	transition: transform 200ms ease-in-out;
+	color: var(--color-muted);
+	flex-shrink: 0;
+}
+
+.bookmarks-filter-section {
+	transition: background-color 150ms ease-in-out;
+	border-bottom-left-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
+}
+
+.bookmarks-filter-section:hover {
+	background-color: rgba(var(--color-secondary-rgb), 0.4);
+	border-bottom-left-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
+}
+
+.filter-dropdown-menu {
+	/* Positioning */
+	position: absolute;
+	top: calc(100% + 0.5rem);
+	left: -0.75rem;
+	right: -0.75rem;
+	z-index: 50;
+	width: calc(100% + 1.5rem);
+	
+	/* Sizing */
+	max-height: 300px;
+	overflow-y: auto;
+	
+	/* Styling */
+	background-color: var(--color-surface);
+	border: 1.5px solid var(--color-border);
+	border-radius: 0.75rem;
+	box-shadow: 
+		0 10px 15px -3px rgba(0, 0, 0, 0.1),
+		0 4px 6px -2px rgba(0, 0, 0, 0.05);
+	
+	/* Animation */
+	animation: slideDownFade 150ms ease-out forwards;
+}
+
+@keyframes slideDownFade {
+	from {
+		opacity: 0;
+		transform: translateY(-0.5rem);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.filter-dropdown-item {
+	/* Reset button styles */
+	border: none;
+	background: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	cursor: pointer;
+	text-align: left;
+	
+	/* Custom styling */
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	padding: 0.75rem 1rem;
+	
+	/* Typography */
+	font-size: 0.875rem;
+	color: var(--color-surface-text);
+	
+	/* Transition */
+	transition: all 100ms ease-in-out;
+	
+	/* Borders */
+	border-bottom: 1px solid rgba(var(--color-border), 0.5);
+}
+
+.filter-dropdown-item:last-child {
+	border-bottom: none;
+}
+
+.filter-dropdown-item:hover {
+	background-color: rgba(var(--color-secondary-rgb), 0.1);
+	color: var(--color-surface-text);
+}
+
+.filter-dropdown-item.selected {
+	background-color: rgba(var(--color-secondary-rgb), 0.15);
+	color: var(--color-bg-text);
+	font-weight: 600;
+}
+
+.filter-dropdown-item.selected:hover {
+	background-color: rgba(var(--color-secondary-rgb), 0.2);
+}
+
+.filter-dropdown-item-text {
+	flex: 1;
+}
+
+.filter-dropdown-checkmark {
+	color: var(--color-secondary);
+	font-weight: bold;
+	font-size: 1.1em;
+	flex-shrink: 0;
+}
+
+/* Scrollbar styling */
+.filter-dropdown-menu::-webkit-scrollbar {
+	width: 6px;
+}
+
+.filter-dropdown-menu::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.filter-dropdown-menu::-webkit-scrollbar-thumb {
+	background-color: var(--color-border);
+	border-radius: 3px;
+	transition: background-color 150ms ease-in-out;
+}
+
+.filter-dropdown-menu::-webkit-scrollbar-thumb:hover {
+	background-color: var(--color-secondary);
+}
+
+/* ============================================
+   SIDEBAR - Utility Classes
+   (Aligned with bookmarks panel styling)
+   ============================================ */
+
+.sidebar-header {
+	background-color: var(--sidebar-header-bg);
+	color: var(--sidebar-header-text);
+	border-color: var(--sidebar-header-border);
+	padding: 1.25rem;
+	border-bottom: 1px solid var(--sidebar-header-border);
+}
+
+.sidebar-header-title {
+	color: var(--sidebar-header-title-color);
+	font-weight: 700;
+	font-size: 1.875rem;
+	margin-bottom: 0.25rem;
+}
+
+.sidebar-header-label {
+	color: var(--sidebar-label-text);
+	font-size: 0.75rem;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.025em;
+}
+
+.sidebar-close-btn {
+	color: var(--sidebar-close-btn-text);
+	padding: 0.5rem;
+	border-radius: 9999px;
+	transition: all 150ms ease-in-out;
+}
+
+.sidebar-close-btn:hover {
+	background-color: var(--sidebar-close-btn-hover-bg);
+	color: var(--sidebar-close-btn-text-hover);
+}
+
+.sidebar-content {
+	background-color: var(--sidebar-body-bg);
+	color: var(--sidebar-body-text);
+	flex: 1;
+	overflow-y: auto;
+	padding: 1.25rem;
+}
+
+.sidebar-line-display {
+	background-color: var(--sidebar-line-bg);
+	color: var(--sidebar-line-text);
+	border-radius: 0.5rem;
+	padding: 1rem;
+}
+
+.sidebar-line-text {
+	font-size: 1.125rem;
+	font-weight: 500;
+	margin-bottom: 0.5rem;
+	color: var(--sidebar-body-text);
+}
+
+.sidebar-line-translation {
+	font-size: 0.875rem;
+	color: var(--sidebar-label-text);
+	font-style: italic;
+}
+
+/* Section Titles (Words, Kanji) */
+.bookmarks-section-title {
+	font-size: 0.875rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-bottom: 0.75rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.bookmarks-section-title.words {
+	color: var(--bookmark-section-title-words);
+}
+
+.bookmarks-section-title.kanji {
+	color: var(--bookmark-section-title-kanji);
+}
+
+/* Section Counter Badge */
+.bookmarks-section-counter {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.75rem;
+	padding: 0 0.5rem;
+	height: 1.5rem;
+	border-radius: 9999px;
+	background-color: var(--bookmark-section-counter-bg);
+	font-weight: normal;
+}
+
+.bookmarks-section-counter.words {
+	color: var(--bookmark-section-counter-words);
+}
+
+.bookmarks-section-counter.kanji {
+	color: var(--bookmark-section-counter-kanji);
+}
+
+/* ============================================
+   WORD TOKEN - Theming (Lyrics display)
+   (Aligned with theme system)
+   ============================================ */
+
+.word-token {
+	/* Base styling */
+	position: relative;
+	padding: 0.25rem 0.25rem;
+	border-radius: 0.25rem;
+	border: none;
+	font-family: inherit;
+	cursor: pointer;
+	
+	/* Transitions */
+	transition: all 200ms ease-in-out;
+}
+
+.word-token-default {
+	color: var(--color-surface-text);
+	background-color: transparent;
+}
+
+.word-token-default:hover {
+	background-color: rgba(var(--color-secondary-rgb), 0.15);
+	color: var(--color-surface-text);
+}
+
+/* ============================================
+   CARD COMPONENTS - Utility Classes
+   (Word, Definition, Kanji cards theming)
+   ============================================ */
+
+/* Word & Definition Cards */
+.card-word {
+	background-color: var(--color-bg);
+	color: var(--color-bg-text);
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	padding: 0.75rem;
+	margin-bottom: 0.75rem;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	transition: all 150ms ease-in-out;
+}
+
+.card-word:hover {
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Unified Word Card (for sidebar) */
+.card-word-unified {
+	background-color: var(--color-bg);
+	color: var(--color-bg-text);
+}
+
+/* Kanji cards within unified word card */
+.card-word-unified .card-kanji {
+	background-color: var(--color-bg);
+	color: var(--color-bg-text);
+}
+
+/* Kanji Cards */
+.card-kanji {
+	background-color: var(--color-bg);
+	color: var(--color-bg-text);
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	padding: 0.75rem;
+	margin-bottom: 0.75rem;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	transition: all 150ms ease-in-out;
+}
+
+.card-kanji:hover {
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* List Name Badge - used in all card types */
+.card-list-name-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	/* background-color: var(); */
+	color: var(--color-primary);
+	border: 1px solid var(--color-primary);
+	border-radius: 0.375rem;
+	padding: 0.25rem 0.5rem;
+	font-size: 0.75rem;
+	font-weight: 500;
+	white-space: nowrap;
+	transition: all 100ms ease-in-out;
+}
+
+/* .card-list-name-badge:hover {
+	background-color: var(--card-list-badge-text);
+	color: var(--card-list-badge-bg);
+	border-color: var(--card-list-badge-text);
+} */
+
+/* Bookmark Button in Cards */
+.card-bookmark-btn {
+	/* Reset button styles */
+	border: none;
+	background: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	cursor: pointer;
+	
+	/* Custom styling */
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.375rem;
+	border-radius: 9999px;
+	transition: all 150ms ease-in-out;
+}
+
+.card-bookmark-btn.bookmarked {
+	color: var(--color-secondary);
+	background-color: rgba(var(--color-secondary-rgb), 0.15);
+}
+
+.card-bookmark-btn.bookmarked:hover {
+	background-color: rgba(var(--color-secondary-rgb), 0.25);
+	color: var(--color-secondary);
+}
+
+.card-bookmark-btn.not-bookmarked {
+	color: var(--color-muted);
+	background-color: transparent;
+}
+
+.card-bookmark-btn.not-bookmarked:hover {
+	color: var(--color-secondary);
+	background-color: rgba(var(--color-secondary-rgb), 0.1);
+}
+
+/* List Picker Button in Cards */
+.card-list-picker-btn {
+	/* Reset button styles */
+	border: none;
+	background: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	cursor: pointer;
+	
+	/* Custom styling */
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.375rem;
+	border-radius: 0.375rem;
+	color: var(--color-muted);
+	background-color: transparent;
+	transition: all 150ms ease-in-out;
+}
+
+.card-list-picker-btn:hover {
+	color: var(--color-surface-text);
+	background-color: rgba(var(--color-surface-rgb), 0.6);
+}
+
+.word-token-selected {
+	background-color: transparent;
+	color: var(--btn-primary-bg);
+	transform: scale(1.05);
+}
+
+.word-token-selected:hover {
+	background-color: rgba(var(--color-secondary-rgb), 0.15);
+	color: rgba(var(--color-primary-rgb));
+	transform: scale(1.05);
+}
+
+.word-token-disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+/* Button Utilities */
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.5rem 1rem;
+	border-radius: 0.375rem;
+	font-weight: 500;
+	transition: all 150ms ease-in-out;
+	border: none;
+	cursor: pointer;
+	gap: 0.5rem;
+}
+
+.btn-primary {
+	background-color: var(--btn-primary-bg);
+	color: var(--btn-primary-text);
+}
+
+.btn-primary:hover {
+	background-color: var(--btn-primary-bg-hover);
+	color: var(--btn-primary-text-hover);
+}
+
+.btn-primary:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.btn-secondary {
+	background-color: var(--btn-secondary-bg);
+	color: var(--btn-secondary-text);
+}
+
+.btn-secondary:hover {
+	background-color: var(--btn-secondary-bg-hover);
+	color: var(--btn-secondary-text-hover);
+}
+
+.btn-secondary:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.btn-danger {
+	background-color: var(--btn-danger-bg);
+	color: var(--btn-danger-text);
+}
+
+.btn-danger:hover {
+	background-color: var(--btn-danger-bg-hover);
+	color: var(--btn-danger-text-hover);
+}
+
+.btn-danger:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.btn-accent {
+	background-color: var(--btn-accent-bg);
+	color: var(--btn-accent-text);
+}
+
+.btn-accent:hover {
+	background-color: var(--btn-accent-bg-hover);
+	color: var(--btn-accent-text-hover);
+}
+
+.btn-accent:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* Icon Button Utilities */
+.icon-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.25rem;
+	border-radius: 0.375rem;
+	transition: all 150ms ease-in-out;
+	border: none;
+	cursor: pointer;
+	background-color: transparent;
+}
+
+.icon-btn-danger {
+	color: var(--btn-danger-text);
+}
+
+.icon-btn-danger:hover {
+	background-color: var(--btn-danger-bg-hover);
+	color: var(--btn-danger-text-hover);
+}
+
+.icon-btn-primary {
+	color: var(--color-muted);
+}
+
+.icon-btn-primary:hover {
+	background-color: rgba(var(--color-primary-rgb), 0.1);
+	color: var(--color-primary);
+}
+
+/* ============================================
+   TOAST NOTIFICATIONS - Animations
+   ============================================ */
+
+@keyframes toastSlideIn {
+	from {
+		transform: translateX(400px) translateY(0);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0) translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes toastSlideOut {
+	from {
+		transform: translateX(0) translateY(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateX(400px) translateY(0);
+		opacity: 0;
+	}
+}
+
+.toast-item {
+	animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-item.closing {
+	animation: toastSlideOut 0.2s ease-in forwards !important;
+}
+
+/* ============================================
+   RESPONSIVE PANEL LAYOUT
+   ============================================ */
+
+/* On tablet and desktop, shift main content left when panels are open to keep lyrics visible */
+@media (min-width: 768px) {
+	.sidebar-open,
+	.bookmarks-open {
+		margin-left: -288px; /* Shift left by panel width */
+	}
+}

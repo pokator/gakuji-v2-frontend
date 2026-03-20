@@ -50,8 +50,10 @@ const SavedSongsPanel = ({ isOpen, onClose, onOpen }: Props) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface">
-      <div className="bg-surface rounded-lg w-[min(90%,700px)] p-4 shadow-lg">
+    <>
+      <div className="fixed inset-0 z-50 modal-overlay" />
+      <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+        <div className="bg-surface text-surface-text rounded-lg w-[min(90%,700px)] p-4 shadow-lg pointer-events-auto">
         <div className="flex justify-between items-center mb-3">
           <h3 className="font-bold">Saved songs</h3>
           <button onClick={onClose} className="text-muted hover:text-text">Close</button>
@@ -72,16 +74,17 @@ const SavedSongsPanel = ({ isOpen, onClose, onOpen }: Props) => {
                     <div className="text-xs text-muted">{new Date(s.createdAt).toLocaleString()}</div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => handleOpen(s)} className="px-3 py-1 bg-button text-button-text rounded text-sm">Open</button>
-                    <button onClick={() => handleDelete(s.id)} className="px-3 py-1 bg-danger/10 text-danger rounded text-sm">Delete</button>
+                    <button onClick={() => handleOpen(s)} className="btn btn-primary text-sm">Open</button>
+                    <button onClick={() => handleDelete(s.id)} className="btn btn-danger text-sm">Delete</button>
                   </div>
                 </li>
               ))}
             </ul>
           )}
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

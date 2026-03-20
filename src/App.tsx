@@ -8,6 +8,7 @@ import { LyricsDisplay } from "./components/lyrics/LyricsDisplay";
 import { getWordData } from './utils/dataHelpers';
 import type { WordEntry } from './types';
 import SongsManagerModal from './components/lyrics/SongsManagerModal';
+import { listSongs } from './utils/savedSongs';
 import { LoadingSpinner } from "./components/ui/LoadingSpinner";
 import Toasts from './components/ui/Toast';
 import { Loader } from 'lucide-react';
@@ -198,17 +199,17 @@ const App = () => {
           activeTitle = match.title ?? null;
           activeArtist = match.artist ?? null;
         }
-      } catch (err) {
+      } catch {
         // ignore
       }
     }
-  } catch (err) {
+  } catch {
     // ignore
   }
   
   return (
-    <div className="min-h-screen bg-bg text-text font-sans flex flex-col md:flex-row overflow-hidden">
-      <div className="flex-1 flex flex-col h-screen overflow-hidden relative z-0 transition-all duration-300">
+    <div className={`min-h-screen bg-bg text-bg-text font-sans flex flex-col md:flex-row overflow-hidden ${sidebarOpen || bookmarksPanelOpen ? 'has-panel-open' : ''}`}>
+      <div className={`flex-1 flex flex-col h-screen overflow-hidden relative z-0 transition-all duration-300 ${sidebarOpen ? 'sidebar-open' : ''} ${bookmarksPanelOpen ? 'bookmarks-open' : ''}`}>
         <Header
           bookmarkCount={totalBookmarks}
           onBookmarksClick={handleBookmarksClick}
@@ -234,7 +235,7 @@ const App = () => {
                   <h2 className="text-2xl font-bold text-text mb-3">No lyrics loaded</h2>
                   <p className="text-sm text-muted mb-4">Paste lyrics to analyze them. Use the button below or press <span className="font-mono">Ctrl/Cmd + Shift + V</span>.</p>
                   <div className="flex gap-2">
-                    <button onClick={() => setSongsManagerOpen(true)} className="bg-button text-button-text force-button px-4 py-2 rounded hover:opacity-90">Paste lyrics</button>
+                    <button onClick={() => setSongsManagerOpen(true)} className="btn btn-primary">Paste lyrics</button>
                   </div>
                 </div>
               )

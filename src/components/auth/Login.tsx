@@ -37,8 +37,8 @@ const Login = ({ onSwitchToSignup }: { onSwitchToSignup: () => void }) => {
         className="w-full p-2 border rounded"
         required
       />
-      <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Login</button>
-      <p>Don't have an account? <button onClick={onSwitchToSignup} className="text-blue-500">Sign up</button></p>
+      <button type="submit" className="btn btn-primary w-full">Login</button>
+      <p>Don't have an account? <button onClick={onSwitchToSignup} className="btn btn-secondary text-xs px-2 py-1">Sign up</button></p>
     </form>
   )
 }

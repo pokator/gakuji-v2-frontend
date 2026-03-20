@@ -7,29 +7,44 @@ export default {
   theme: {
     extend: {
       colors: {
+        /* Background and text colors */
+        bg: 'var(--color-bg)',
+        'bg-text': 'var(--color-bg-text)',
+        
+        /* Surface colors (cards, panels, modals) */
+        surface: 'var(--color-surface)',
+        'surface-text': 'var(--color-surface-text)',
+        
+        /* Semantic colors */
         primary: 'var(--color-primary)',
-        'primary-rgb': 'var(--color-primary-rgb)',
-        button: 'var(--color-button-bg)',
-        'button-text': 'var(--color-button-text)',
-        modal: 'var(--color-modal)',
-        'modal-text': 'var(--color-modal-text)',
-        'modal-rgb': 'var(--color-modal-rgb)',
-        panel: 'var(--color-panel)',
-        'panel-text': 'var(--color-panel-text)',
-        'panel-rgb': 'var(--color-panel-rgb)',
+        'primary-text': 'var(--color-primary-text)',
+        secondary: 'var(--color-secondary)',
+        'secondary-text': 'var(--color-secondary-text)',
+        
+        /* State colors */
+        success: 'var(--color-success)',
+        danger: 'var(--color-danger)',
+        muted: 'var(--color-muted)',
+        'muted-text': 'var(--color-muted-text)',
+        
+        /* Borders */
+        border: 'var(--color-border)',
+        
+        /* Warning color for Kanji cards */
         warning: 'var(--color-warning)',
         'warning-text': 'var(--color-warning-text)',
-        'warning-rgb': 'var(--color-warning-rgb)',
-        'warning-bg': 'var(--color-warning-bg)',
+        'warning-bg': 'var(--color-warning)',
         'warning-border': 'var(--color-warning-border)',
-        accent: 'var(--color-accent)',
-        bg: 'var(--color-bg)',
-        surface: 'var(--color-surface)',
-        text: 'var(--color-text)',
-        muted: 'var(--color-muted)',
-        danger: 'var(--color-danger)',
-        success: 'var(--color-success)',
-        border: 'var(--color-border)'
+        
+        /* Button colors */
+        'btn-primary': 'var(--btn-primary-bg)',
+        'btn-primary-hover': 'var(--btn-primary-bg-hover)',
+        'btn-secondary': 'var(--btn-secondary-bg)',
+        'btn-secondary-hover': 'var(--btn-secondary-bg-hover)',
+        'btn-danger': 'var(--btn-danger-bg)',
+        'btn-danger-hover': 'var(--btn-danger-bg-hover)',
+        'btn-accent': 'var(--btn-accent-bg)',
+        'btn-accent-hover': 'var(--btn-accent-bg-hover)'
       },
       fontFamily: {
         sans: ['var(--font-sans)'],

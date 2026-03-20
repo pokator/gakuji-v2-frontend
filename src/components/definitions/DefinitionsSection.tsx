@@ -39,7 +39,7 @@ export const DefinitionsSection = ({
           />
         ))
       ) : (
-        <div className="p-4 bg-surface rounded-lg text-sm text-muted italic text-center">
+        <div className="p-4 bg-surface rounded-lg text-sm text-muted italic text-center text-surface-text">
           No dictionary definitions found for this specific token.
         </div>
       )}

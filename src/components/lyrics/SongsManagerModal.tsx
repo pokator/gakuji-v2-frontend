@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
-import type { SavedSong } from '../../types';
+import type { SavedSong, AppData } from '../../types';
 import { listSongs, saveSong, loadSong, updateSong, deleteSong } from '../../utils/savedSongs';
 import { ErrorDisplay } from '../ui/ErrorDisplay';
+import { Trash2, X, Plus } from 'lucide-react';
 
 interface Props {
   isOpen: boolean;
@@ -11,8 +12,8 @@ interface Props {
   initialLyrics?: string | null;
   initialTitle?: string | null;
   initialArtist?: string | null;
-  // Called to process lyrics; return a Promise to block modal until complete
-  onProcess: (lyrics: string) => Promise<void> | void;
+  // Called to process lyrics; can return processed data or void
+  onProcess: (lyrics: string) => Promise<unknown> | void;
   onClear: () => void;
 }
 
@@ -31,6 +32,7 @@ const SongsManagerModal = ({ isOpen, onClose, processing, error, initialLyrics, 
   const [lyrics, setLyrics] = useState<string>('');
   const [localError, setLocalError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const load = () => {
@@ -54,6 +56,17 @@ const SongsManagerModal = ({ isOpen, onClose, processing, error, initialLyrics, 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  useEffect(() => {
+    setIsClosing(false);
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 200);
+  };
 
   const handleSelect = (s: SavedSong) => {
     setSelectedId(s.id);
@@ -133,19 +146,19 @@ const SongsManagerModal = ({ isOpen, onClose, processing, error, initialLyrics, 
             const artistChanged = (match.artist ?? '') !== (artist ?? '');
             if (titleChanged || artistChanged) {
               // create a new saved song with processed appData
-              const newSong = saveSong({ title: title || null, artist: artist || null, lyrics: trimmed, appData: (processed as any) ?? null });
+              saveSong({ title: title || null, artist: artist || null, lyrics: trimmed, appData: (processed ? processed as AppData : null) });
             } else {
               // update the matched song with new lyrics + appData
-              updateSong(match.id, { title: title ?? match.title, artist: artist ?? match.artist, lyrics: trimmed, appData: (processed as any) ?? null, lastProcessedAt: Date.now() });
+              updateSong(match.id, { title: title ?? match.title, artist: artist ?? match.artist, lyrics: trimmed, appData: (processed ? processed as AppData : null), lastProcessedAt: Date.now() });
             }
           } else {
             // no matching saved song for original — just save new
-            saveSong({ title: title || null, artist: artist || null, lyrics: trimmed, appData: (processed as any) ?? null });
+            saveSong({ title: title || null, artist: artist || null, lyrics: trimmed, appData: (processed ? processed as AppData : null) });
           }
         } catch (err) {
           console.error('Failed to update saved song after processing', err);
         }
-        onClose();
+        handleClose();
       } else {
         // Normal flow: persist first, then call processing
         if (selectedId) {
@@ -166,7 +179,7 @@ const SongsManagerModal = ({ isOpen, onClose, processing, error, initialLyrics, 
         }
 
         await Promise.resolve(onProcess(trimmed));
-        onClose();
+        handleClose();
       }
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : String(err) || 'Failed to process lyrics');
@@ -175,21 +188,23 @@ const SongsManagerModal = ({ isOpen, onClose, processing, error, initialLyrics, 
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen && !isClosing) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-modal text-modal-text rounded-lg w-[min(96%,1000px)] p-4 shadow-lg max-h-[90vh] overflow-hidden">
-        <div className="flex justify-between items-center mb-3 text-button-text">
-          <h3 className="font-bold">Songs</h3>
-          <button onClick={onClose} className="text-muted hover:text-text">Close</button>
+    <>
+      <div className={`fixed inset-0 z-50 modal-overlay ${isClosing ? 'closing' : ''}`} />
+      <div className={`fixed inset-0 z-50 flex items-center justify-center pointer-events-none modal-overlay-container ${isClosing ? 'closing' : ''}`}>
+        <div className={`songs-manager-modal rounded-lg w-[min(96%,1000px)] p-4 shadow-lg max-h-[90vh] overflow-hidden pointer-events-auto ${isClosing ? 'closing' : ''}`}>
+        <div className="flex justify-between items-center mb-3">
+          <h1 className="font-bold text-text"></h1>
+          <button onClick={handleClose} className="icon-btn icon-btn-danger"><X className="h-6 w-6" /></button>
         </div>
 
         <div className="flex gap-4 h-[70vh]">
-          <div className="w-72 flex-shrink-0 border-r border-border pr-3 bg-panel text-panel-text">
+          <div className="w-72 shrink-0 border-r border-border pr-3 bg-surface text-surface-text">
             <div className="flex items-center justify-between mb-3">
-              <div className="font-semibold">Saved</div>
-              <button onClick={handleNew} className="text-sm px-2 py-1 bg-button text-button-text rounded">New</button>
+              <div className="font-semibold">Songs</div>
+              <button onClick={handleNew} className="icon-btn icon-btn-primary"><Plus className="h-5 w-5" /></button>
             </div>
             <div className="overflow-y-auto max-h-full">
               {songs.length === 0 ? (
@@ -197,14 +212,14 @@ const SongsManagerModal = ({ isOpen, onClose, processing, error, initialLyrics, 
               ) : (
                 <ul className="space-y-2">
                   {songs.map(s => (
-                    <li key={s.id} className={`flex items-start justify-between p-2 rounded border ${selectedId === s.id ? 'bg-surface/50 border-primary' : 'border-border'}`}>
+                    <li key={s.id} className={`flex items-start justify-between p-2 rounded border ${selectedId === s.id ? 'bg-surface/50 text-surface-text border-primary' : 'border-border'}`}>
                       <button onClick={() => handleSelect(s)} className="text-left flex-1 pr-2">
                         <div className="font-semibold truncate">{s.title || <span className="text-sm text-muted">(Untitled)</span>}</div>
                         <div className="text-sm text-muted truncate">{s.artist || ''}</div>
                         <div className="text-xs text-muted">{new Date(s.createdAt).toLocaleString()}</div>
                       </button>
                       <div className="flex flex-col items-end gap-1">
-                        <button onClick={() => handleDelete(s.id)} className="px-2 py-1 bg-danger/10 text-danger rounded text-xs">Del</button>
+                        <button onClick={() => handleDelete(s.id)} className="btn btn-danger text-xs px-2 py-0.5"><Trash2 size={12} /></button>
                       </div>
                     </li>
                   ))}
@@ -233,15 +248,15 @@ const SongsManagerModal = ({ isOpen, onClose, processing, error, initialLyrics, 
               )}
 
               <div className="flex justify-end gap-2">
-                <button onClick={onClear} className="px-3 py-1 rounded bg-surface hover:opacity-90">Clear lyrics</button>
-                <button onClick={handleSave} className="px-3 py-1 rounded bg-button text-button-text">Save</button>
+                <button onClick={onClear} className="btn btn-secondary">Clear lyrics</button>
+                <button onClick={handleSave} className="btn btn-primary">Save</button>
                 <button
                   onClick={handleSend}
-                  className={`px-4 py-1 rounded bg-button text-button-text flex items-center gap-2 ${(processing || submitting) ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90'}`}
+                  className="btn btn-primary disabled:opacity-50"
                   disabled={processing || submitting}
                 >
                   {(processing || submitting) ? (
-                    <span className="w-3 h-3 rounded-full bg-white animate-pulse" />
+                    <span className="w-3 h-3 rounded-full bg-current animate-pulse" />
                   ) : null}
                   Send
                 </button>
@@ -250,7 +265,8 @@ const SongsManagerModal = ({ isOpen, onClose, processing, error, initialLyrics, 
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

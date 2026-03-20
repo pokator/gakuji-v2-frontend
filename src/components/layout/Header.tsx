@@ -25,7 +25,7 @@ export const Header = ({
   const { theme, toggle } = useTheme();
 
   return (
-    <header className="z-10 flex items-center justify-between border-b border-border bg-surface px-6 py-4 shadow-sm">
+    <header className="z-10 flex items-center justify-between border-b border-border bg-surface text-surface-text px-6 py-4 shadow-sm">
     <div className="flex w-[400px] items-center justify-start gap-2">
       <BookOpen className="h-6 w-6 text-primary" />
       <h1 className="text-xl font-bold tracking-tight text-text">
@@ -62,11 +62,9 @@ export const Header = ({
           aria-label="Open songs manager"
           title="Songs"
           disabled={isProcessing}
-          className={`flex items-center justify-center rounded-lg p-2 transition-colors bg-button text-button-text force-button hover:bg-surface ${
-            isProcessing ? "cursor-not-allowed opacity-50" : ""
-          }`}
+          className="rounded-lg p-2 transition-colors hover:bg-surface disabled:opacity-50"
         >
-          <ListMusic className="h-5 w-5 text-current" />
+          <ListMusic className="h-5 w-5 text-secondary" />
         </button>
       )}
 
@@ -78,7 +76,7 @@ export const Header = ({
           className="rounded-lg p-2 transition-colors hover:bg-surface"
         >
         {theme === 'dark' ? (
-          <Sun className="h-5 w-5 text-warning" />
+          <Sun className="h-5 w-5 text-secondary" />
         ) : (
           <Moon className="h-5 w-5 text-muted" />
         )}
@@ -87,14 +85,14 @@ export const Header = ({
       <button
         onClick={onBookmarksClick}
         title="View bookmarks"
-        className="group relative rounded-lg p-2 transition-colors hover:bg-surface"
+        className="bookmark-icon-btn group relative rounded-lg p-2 transition-colors"
       >
         <Bookmark
-          className="h-5 w-5 text-muted transition-colors group-hover:text-warning"
+          className="bookmark-icon h-5 w-5"
           fill={bookmarkCount > 0 ? "currentColor" : "none"}
         />
         {bookmarkCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-warning text-xs font-bold text-warning-text">
+          <span className="bookmark-counter">
             {bookmarkCount > 99 ? "99+" : bookmarkCount}
           </span>
         )}
