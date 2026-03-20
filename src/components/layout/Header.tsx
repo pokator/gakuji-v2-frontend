@@ -1,4 +1,4 @@
-import { BookOpen, Bookmark, LogOut, ListMusic, Sun, Moon } from "lucide-react";
+import { BookOpen, Bookmark, LogOut, ListMusic, Sun, Moon, Brain } from "lucide-react";
 import { useTheme } from "../../hooks/useTheme";
 
 interface HeaderProps {
@@ -10,6 +10,8 @@ interface HeaderProps {
   isProcessing?: boolean;
   activeTitle?: string | null;
   activeArtist?: string | null;
+  onConvertToAnki?: () => void;
+  hasLyrics?: boolean;
 }
 
 export const Header = ({
@@ -21,6 +23,8 @@ export const Header = ({
   isProcessing,
   activeTitle,
   activeArtist,
+  onConvertToAnki,
+  hasLyrics,
 }: HeaderProps) => {
   const { theme, toggle } = useTheme();
 
@@ -52,60 +56,89 @@ export const Header = ({
     </div>
 
     <div className="flex w-[400px] items-center justify-end gap-4">
-      <div className="hidden text-xs font-medium text-muted sm:block">
-        Click words to analyze
-      </div>
 
       {onOpenSongsManager && (
-        <button
-          onClick={onOpenSongsManager}
-          aria-label="Open songs manager"
-          title="Songs"
-          disabled={isProcessing}
-          className="rounded-lg p-2 transition-colors hover:bg-surface disabled:opacity-50"
-        >
-          <ListMusic className="h-5 w-5 text-secondary" />
-        </button>
+        <div className="relative group">
+          <button
+            onClick={onOpenSongsManager}
+            aria-label="Open songs manager"
+            disabled={isProcessing}
+            className="rounded-lg p-2 transition-colors hover:bg-surface disabled:opacity-50"
+          >
+            <ListMusic className="h-5 w-5 text-secondary" />
+          </button>
+          <div className="header-tooltip absolute top-full left-1/2 transform -translate-x-1/2 mt-2 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
+            Manage songs
+          </div>
+        </div>
+      )}
+
+      {onConvertToAnki && (
+        <div className="relative group">
+          <button
+            onClick={onConvertToAnki}
+            aria-label="Convert to Anki"
+            disabled={!hasLyrics}
+            className="rounded-lg p-2 transition-colors hover:bg-surface disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Brain className="h-5 w-5 text-secondary" />
+          </button>
+          <div className="header-tooltip absolute top-full left-1/2 transform -translate-x-1/2 mt-2 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
+            Convert to Anki
+          </div>
+        </div>
       )}
 
       {/* Theme toggle */}
+      <div className="relative group">
         <button
           onClick={toggle}
           aria-label="Toggle theme"
-          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
           className="rounded-lg p-2 transition-colors hover:bg-surface"
         >
-        {theme === 'dark' ? (
-          <Sun className="h-5 w-5 text-secondary" />
-        ) : (
-          <Moon className="h-5 w-5 text-muted" />
-        )}
-      </button>
+          {theme === 'dark' ? (
+            <Sun className="h-5 w-5 text-secondary" />
+          ) : (
+            <Moon className="h-5 w-5 text-muted" />
+          )}
+        </button>
+        <div className="header-tooltip absolute top-full left-1/2 transform -translate-x-1/2 mt-2 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
+          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        </div>
+      </div>
 
-      <button
-        onClick={onBookmarksClick}
-        title="View bookmarks"
-        className="bookmark-icon-btn group relative rounded-lg p-2 transition-colors"
-      >
-        <Bookmark
-          className="bookmark-icon h-5 w-5"
-          fill={bookmarkCount > 0 ? "currentColor" : "none"}
-        />
-        {bookmarkCount > 0 && (
-          <span className="bookmark-counter">
-            {bookmarkCount > 99 ? "99+" : bookmarkCount}
-          </span>
-        )}
-      </button>
+      <div className="relative group">
+        <button
+          onClick={onBookmarksClick}
+          className="bookmark-icon-btn rounded-lg p-2 transition-colors"
+        >
+          <Bookmark
+            className="bookmark-icon h-5 w-5"
+            fill={bookmarkCount > 0 ? "currentColor" : "none"}
+          />
+          {bookmarkCount > 0 && (
+            <span className="bookmark-counter">
+              {bookmarkCount > 99 ? "99+" : bookmarkCount}
+            </span>
+          )}
+        </button>
+        <div className="header-tooltip absolute top-full left-1/2 transform -translate-x-1/2 mt-2 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
+          View bookmarks
+        </div>
+      </div>
 
       {user && (
-        <button
-          onClick={onLogout}
-          title="Logout"
-          className="rounded-lg p-2 transition-colors hover:bg-surface"
-        >
-          <LogOut className="h-5 w-5 text-muted" />
-        </button>
+        <div className="relative group">
+          <button
+            onClick={onLogout}
+            className="rounded-lg p-2 transition-colors hover:bg-surface"
+          >
+            <LogOut className="h-5 w-5 text-muted" />
+          </button>
+          <div className="header-tooltip absolute top-full left-1/2 transform -translate-x-1/2 mt-2 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
+            Logout
+          </div>
+        </div>
       )}
     </div>
   </header>

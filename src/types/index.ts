@@ -68,3 +68,14 @@ export interface SavedSong {
   lastProcessedAt?: number | null;
   appData?: AppData | null;
 }
+
+export interface AnkiCard {
+  word: string;
+  furigana: string;
+  definitions: Definition[];
+  contextLine: string;
+  contextTranslation: string | undefined;
+  kanjiList: Array<{ char: string; data: KanjiData }>;
+  idseq: number | undefined;
+  lineIndex: number;
+}

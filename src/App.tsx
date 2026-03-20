@@ -5,8 +5,10 @@ import { MobileOverlay } from "./components/layout/MobileOverlay";
 import { BookmarksPanel } from "./components/bookmarks/BookmarksPanel";
 import ListPicker from "./components/bookmarks/ListPicker";
 import { LyricsDisplay } from "./components/lyrics/LyricsDisplay";
+import { AnkiCardsPanel } from "./components/lyrics/AnkiCardsPanel";
 import { getWordData } from './utils/dataHelpers';
-import type { WordEntry } from './types';
+import { convertSongToAnkiCards, deduplicateAnkiCards } from './utils/ankiHelper';
+import type { WordEntry, AnkiCard } from './types';
 import SongsManagerModal from './components/lyrics/SongsManagerModal';
 import { listSongs } from './utils/savedSongs';
 import { LoadingSpinner } from "./components/ui/LoadingSpinner";
@@ -97,9 +99,19 @@ const App = () => {
   const [selectedEntry, setSelectedEntry] = useState<WordEntry | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [bookmarksPanelOpen, setBookmarksPanelOpen] = useState(false);
+  const [ankiCards, setAnkiCards] = useState<AnkiCard[]>([]);
+  const [removedAnkiCards, setRemovedAnkiCards] = useState<AnkiCard[]>([]);
+  const [ankiPanelOpen, setAnkiPanelOpen] = useState(false);
 
   // initialize theme (applies persisted dataset to <html>)
   useTheme();
+
+  // Clear Anki cards when lyrics change
+  useEffect(() => {
+    setAnkiCards([]);
+    setRemovedAnkiCards([]);
+    setAnkiPanelOpen(false);
+  }, [appData]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -155,6 +167,7 @@ const App = () => {
         setSelectedEntry(null);
         setSidebarOpen(true);
         setBookmarksPanelOpen(false);
+        setAnkiPanelOpen(false);
         return;
       }
       const lineIndex = appData.lyrics_lines.findIndex(l => l === line);
@@ -166,18 +179,72 @@ const App = () => {
       setSelectedLine(line);
       setSelectedTranslation(translation);
       setSidebarOpen(true);
-      setBookmarksPanelOpen(false); // Close bookmarks when opening sidebar
+      setBookmarksPanelOpen(false);
+      setAnkiPanelOpen(false);
     }
   };
   const handleBookmarksClick = () => {
     setBookmarksPanelOpen(!bookmarksPanelOpen);
     if (!bookmarksPanelOpen) {
-      setSidebarOpen(false); // Close sidebar when opening bookmarks
+      setSidebarOpen(false);
+      setAnkiPanelOpen(false);
     }
   };
   const handleSongsManagerClick = () => {
     setSongsManagerOpen(prev => !prev);
-    if (!songsManagerOpen) setSidebarOpen(false);
+    if (!songsManagerOpen) {
+      setSidebarOpen(false);
+      setAnkiPanelOpen(false);
+    }
+  };
+
+  const handleConvertToAnki = () => {
+    // If panel is already open, just close it
+    if (ankiPanelOpen) {
+      setAnkiPanelOpen(false);
+      return;
+    }
+
+    if (!appData) {
+      pushToast('No lyrics loaded', 'error');
+      return;
+    }
+
+    try {
+      const cards = convertSongToAnkiCards(appData);
+      const deduplicated = deduplicateAnkiCards(cards);
+      
+      // Filter out cards that are in the removed list to preserve removed state
+      const activeCards = deduplicated.filter(newCard =>
+        !removedAnkiCards.some(
+          removedCard =>
+            removedCard.word === newCard.word &&
+            removedCard.furigana === newCard.furigana &&
+            removedCard.lineIndex === newCard.lineIndex
+        )
+      );
+
+      setAnkiCards(activeCards);
+      // Keep the removed cards - don't clear them
+      setAnkiPanelOpen(true);
+      setSidebarOpen(false);
+      setBookmarksPanelOpen(false);
+      pushToast(`Converted ${deduplicated.length} cards (${activeCards.length} active)`, 'success');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      pushToast(msg || 'Failed to convert to Anki', 'error');
+      console.error('Error converting to Anki:', err);
+    }
+  };
+
+  const handleRemoveAnkiCard = (card: AnkiCard) => {
+    setAnkiCards(prev => prev.filter(c => !(c.word === card.word && c.furigana === card.furigana && c.lineIndex === card.lineIndex)));
+    setRemovedAnkiCards(prev => [...prev, card]);
+  };
+
+  const handleRestoreAnkiCard = (card: AnkiCard) => {
+    setRemovedAnkiCards(prev => prev.filter(c => !(c.word === card.word && c.furigana === card.furigana && c.lineIndex === card.lineIndex)));
+    setAnkiCards(prev => [...prev, card]);
   };
   if (authLoading || loading) return <LoadingSpinner />;
   if (!user) return <AuthModal isOpen={true} />;
@@ -208,8 +275,8 @@ const App = () => {
   }
   
   return (
-    <div className={`min-h-screen bg-bg text-bg-text font-sans flex flex-col md:flex-row overflow-hidden ${sidebarOpen || bookmarksPanelOpen ? 'has-panel-open' : ''}`}>
-      <div className={`flex-1 flex flex-col h-screen overflow-hidden relative z-0 transition-all duration-300 ${sidebarOpen ? 'sidebar-open' : ''} ${bookmarksPanelOpen ? 'bookmarks-open' : ''}`}>
+    <div className={`min-h-screen bg-bg text-bg-text font-sans flex flex-col md:flex-row overflow-hidden ${sidebarOpen || bookmarksPanelOpen || ankiPanelOpen ? 'has-panel-open' : ''}`}>
+      <div className={`flex-1 flex flex-col h-screen overflow-hidden relative z-0 transition-all duration-300 ${sidebarOpen ? 'sidebar-open' : ''} ${bookmarksPanelOpen ? 'bookmarks-open' : ''} ${ankiPanelOpen ? 'anki-open' : ''}`}>
         <Header
           bookmarkCount={totalBookmarks}
           onBookmarksClick={handleBookmarksClick}
@@ -219,6 +286,8 @@ const App = () => {
           isProcessing={processing}
           activeTitle={activeTitle}
           activeArtist={activeArtist}
+          onConvertToAnki={handleConvertToAnki}
+          hasLyrics={!!appData}
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12 flex items-start justify-center">
           <div className="w-full max-w-3xl">
@@ -291,6 +360,15 @@ const App = () => {
         onOpenListPicker={openListPicker}
       />
 
+      <AnkiCardsPanel
+        isOpen={ankiPanelOpen}
+        activeCards={ankiCards}
+        removedCards={removedAnkiCards}
+        onClose={() => setAnkiPanelOpen(false)}
+        onRemoveCard={handleRemoveAnkiCard}
+        onRestoreCard={handleRestoreAnkiCard}
+      />
+
       <ListPicker
         isOpen={listPickerOpen}
         onClose={closeListPicker}
@@ -316,17 +394,6 @@ const App = () => {
         initialArtist={songsManagerInitialArtist ?? null}
         originalLyrics={songsManagerOriginal ?? null}
         onProcess={handleSongsManagerProcess}
-        onClear={() => {
-          clearLyrics();
-          setSelectedWord(null);
-          setSelectedLine(null);
-          setSelectedTranslation(null);
-          try {
-            refreshBookmarks();
-          } catch (err) {
-            console.error('Failed to refresh bookmarks after clearing lyrics', err);
-          }
-        }}
       />
 
       <Toasts toasts={toasts} onClose={removeToast} />
