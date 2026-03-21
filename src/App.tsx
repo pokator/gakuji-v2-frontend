@@ -7,8 +7,8 @@ import ListPicker from "./components/bookmarks/ListPicker";
 import { LyricsDisplay } from "./components/lyrics/LyricsDisplay";
 import { AnkiCardsPanel } from "./components/lyrics/AnkiCardsPanel";
 import { getWordData } from './utils/dataHelpers';
-import { convertSongToAnkiCards, deduplicateAnkiCards } from './utils/ankiHelper';
-import type { WordEntry, AnkiCard } from './types';
+import { convertSongToAnkiCards, deduplicateAnkiCards, collectDistinctKanjiFromCards, buildAnkiKanjiCards } from './utils/ankiHelper';
+import type { WordEntry, AnkiCard, AnkiKanjiCard } from './types';
 import SongsManagerModal from './components/lyrics/SongsManagerModal';
 import { listSongs } from './utils/savedSongs';
 import { LoadingSpinner } from "./components/ui/LoadingSpinner";
@@ -102,6 +102,8 @@ const App = () => {
   const [ankiCards, setAnkiCards] = useState<AnkiCard[]>([]);
   const [removedAnkiCards, setRemovedAnkiCards] = useState<AnkiCard[]>([]);
   const [ankiPanelOpen, setAnkiPanelOpen] = useState(false);
+  const [ankiKanji, setAnkiKanji] = useState<AnkiKanjiCard[]>([]);
+  const [removedAnkiKanji, setRemovedAnkiKanji] = useState<AnkiKanjiCard[]>([]);
 
   // initialize theme (applies persisted dataset to <html>)
   useTheme();
@@ -110,6 +112,8 @@ const App = () => {
   useEffect(() => {
     setAnkiCards([]);
     setRemovedAnkiCards([]);
+    setAnkiKanji([]);
+    setRemovedAnkiKanji([]);
     setAnkiPanelOpen(false);
   }, [appData]);
 
@@ -198,7 +202,7 @@ const App = () => {
     }
   };
 
-  const handleConvertToAnki = () => {
+  const handleConvertToAnki = async () => {
     // If panel is already open, just close it
     if (ankiPanelOpen) {
       setAnkiPanelOpen(false);
@@ -224,12 +228,30 @@ const App = () => {
         )
       );
 
+      // Collect distinct kanji from active cards
+      const distinctKanjiChars = collectDistinctKanjiFromCards(activeCards);
+      
+      // Build kanji cards with fetched data
+      const kanjiCardsWithData = await buildAnkiKanjiCards(distinctKanjiChars);
+      
+      // Filter out kanji that are in the removed list
+      const activeKanjiCards = kanjiCardsWithData
+        .filter((item) => item.data !== null) // Only keep kanji with data
+        .filter((item) =>
+          !removedAnkiKanji.some(removed => removed.char === item.char)
+        )
+        .map((item) => ({
+          char: item.char,
+          data: item.data!,
+        }));
+
       setAnkiCards(activeCards);
+      setAnkiKanji(activeKanjiCards);
       // Keep the removed cards - don't clear them
       setAnkiPanelOpen(true);
       setSidebarOpen(false);
       setBookmarksPanelOpen(false);
-      pushToast(`Converted ${deduplicated.length} cards (${activeCards.length} active)`, 'success');
+      pushToast(`Converted ${deduplicated.length} cards (${activeCards.length} active) with ${activeKanjiCards.length} distinct kanji`, 'success');
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       pushToast(msg || 'Failed to convert to Anki', 'error');
@@ -245,6 +267,22 @@ const App = () => {
   const handleRestoreAnkiCard = (card: AnkiCard) => {
     setRemovedAnkiCards(prev => prev.filter(c => !(c.word === card.word && c.furigana === card.furigana && c.lineIndex === card.lineIndex)));
     setAnkiCards(prev => [...prev, card]);
+  };
+
+  const handleRemoveAnkiKanji = (kanjiChar: string) => {
+    const kanji = ankiKanji.find(k => k.char === kanjiChar);
+    if (kanji) {
+      setAnkiKanji(prev => prev.filter(k => k.char !== kanjiChar));
+      setRemovedAnkiKanji(prev => [...prev, kanji]);
+    }
+  };
+
+  const handleRestoreAnkiKanji = (kanjiChar: string) => {
+    const kanji = removedAnkiKanji.find(k => k.char === kanjiChar);
+    if (kanji) {
+      setRemovedAnkiKanji(prev => prev.filter(k => k.char !== kanjiChar));
+      setAnkiKanji(prev => [...prev, kanji]);
+    }
   };
   if (authLoading || loading) return <LoadingSpinner />;
   if (!user) return <AuthModal isOpen={true} />;
@@ -367,6 +405,10 @@ const App = () => {
         onClose={() => setAnkiPanelOpen(false)}
         onRemoveCard={handleRemoveAnkiCard}
         onRestoreCard={handleRestoreAnkiCard}
+        activeKanji={ankiKanji}
+        removedKanji={removedAnkiKanji}
+        onRemoveKanji={handleRemoveAnkiKanji}
+        onRestoreKanji={handleRestoreAnkiKanji}
       />
 
       <ListPicker

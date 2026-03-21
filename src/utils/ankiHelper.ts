@@ -174,3 +174,41 @@ export const fetchMultipleKanjiData = async (
     (result): result is { char: string; data: KanjiData } => result !== null
   );
 };
+
+/**
+ * Collects all distinct kanji from an array of Anki cards.
+ * Returns unique kanji characters sorted alphabetically.
+ */
+export const collectDistinctKanjiFromCards = (cards: AnkiCard[]): string[] => {
+  const kanjiSet = new Set<string>();
+
+  cards.forEach(card => {
+    // Add kanji from kanjiList (from word)
+    card.kanjiList.forEach(item => {
+      kanjiSet.add(item.char);
+    });
+
+    // Also extract any kanji from the word itself (in case kanjiList is empty)
+    const wordKanji = extractKanjiFromText(card.word);
+    wordKanji.forEach(char => kanjiSet.add(char));
+  });
+
+  // Return sorted unique kanji
+  return Array.from(kanjiSet).sort();
+};
+
+/**
+ * Builds kanji cards with data from a list of kanji characters.
+ * Fetches data for any kanji that doesn't have it cached.
+ */
+export const buildAnkiKanjiCards = async (
+  kanjiChars: string[]
+): Promise<Array<{ char: string; data: KanjiData | undefined }>> => {
+  const results = await Promise.all(
+    kanjiChars.map(async (char) => {
+      const data = await fetchKanjiData(char);
+      return { char, data };
+    })
+  );
+  return results;
+};

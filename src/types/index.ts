@@ -79,3 +79,8 @@ export interface AnkiCard {
   idseq: number | undefined;
   lineIndex: number;
 }
+
+export interface AnkiKanjiCard {
+  char: string;
+  data: KanjiData;
+}
