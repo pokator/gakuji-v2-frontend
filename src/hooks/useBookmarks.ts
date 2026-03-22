@@ -4,7 +4,8 @@ import { supabase } from '../utils/supabase';
 import { cache } from '../utils/cache';
 import { useAuth } from './useAuth';
 
-const BACKEND_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+// const BACKEND_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+const BACKEND_BASE = 'http://localhost:8000';
 
 export const useBookmarks = () => {
   const { user, loading: authLoading } = useAuth();

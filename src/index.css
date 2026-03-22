@@ -622,6 +622,22 @@ html, body {
 	animation: slideOutToCenter 0.2s ease-in forwards !important;
 }
 
+.anki-setup-modal {
+	background-color: var(--color-surface);
+	color: var(--color-surface-text);
+	animation: slideInFromCenter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.anki-setup-modal.closing {
+	animation: slideOutToCenter 0.2s ease-in forwards !important;
+}
+
+.anki-setup-modal-header {
+	background-color: var(--color-surface);
+	color: var(--color-surface-text);
+	border-bottom-color: var(--color-border);
+}
+
 /* ============================================
    BOOKMARKS PANEL - Utility Classes
    ============================================ */

@@ -409,6 +409,7 @@ const App = () => {
         removedKanji={removedAnkiKanji}
         onRemoveKanji={handleRemoveAnkiKanji}
         onRestoreKanji={handleRestoreAnkiKanji}
+        pushToast={pushToast}
       />
 
       <ListPicker

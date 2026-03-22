@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { AppData } from '../types';
 
-const BACKEND_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+// const BACKEND_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+const BACKEND_BASE = 'http://localhost:8000';
 
 export const useAppData = (enabled: boolean, userId?: string | null) => {
   const [appData, setAppData] = useState<AppData | null>(null);
